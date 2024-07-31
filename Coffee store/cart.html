@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beans.pk Store</title>
+    <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <header>
+        <div class="header-1-container">
+            <!-- <div class="header-1">
+                <img class="logo" src="Brown_Vintage_Coffee_Shop_Logo__2_-removebg-preview.png" alt="Beans.pk Logo">
+            </div> -->
+
+            <div class="page-name">
+                <h1>Beans.pk Cart</h1>
+            </div>
+            <div class="cart">
+                <button class="btn-1" id="view-cart-button">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <p id="cart-total">$0.00 (0)</p>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section>
+        <div class="cart-container">
+            <div class="cart-title">
+                <h1>Shopping Cart</h1>
+            </div>
+            <div class="cart-items" id="cart-items">
+                <!-- Cart items will be dynamically added here -->
+            </div>
+            <div class="cart-summary">
+                <p>Total Items: <span id="total-items">0</span></p>
+                <p>Total Price: $<span id="total-price">0.00</span></p>
+            </div>
+            <div class="discount-section">
+                <label for="discount-code">Discount Code:</label>
+                <input type="text" id="discount-code" placeholder="Enter code">
+                <button id="apply-discount">Apply</button>
+            </div>
+            <div class="cart-total">
+                <p>Total: $<span id="total-amount">0.00</span></p>
+                <a href="checkout.html"><button id="checkout-button">Checkout</button></a>
+            </div>
+        </div>
+    </section>
+
+    <script src="cart.js"></script>
+</body>
+
+</html>

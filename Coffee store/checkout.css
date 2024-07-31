@@ -1,0 +1,130 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f1ebe4; /* Light background color for consistency */
+    margin: 0;
+    padding: 0;
+}
+
+.header-container {
+    background-color: #333; /* Matching header background */
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.checkout-step {
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    background-color: #fff; /* White background for the checkout steps */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    max-width: 800px; /* Restrict maximum width for better readability */
+}
+
+.checkout-step h2 {
+    margin-top: 0;
+    color: #333; /* Dark text color for headings */
+}
+
+.checkout-step form {
+    display: flex;
+    flex-direction: column;
+}
+
+.checkout-step form label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555; /* Slightly darker text color for labels */
+}
+
+.checkout-step form input {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px; /* Larger font size for better readability */
+}
+
+.checkout-step form button {
+    padding: 10px;
+    background-color: #ffc107; /* Consistent with home page button color */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px; /* Larger font size for the button */
+}
+
+.checkout-step form button:hover {
+    background-color: #e0a800; /* Slightly darker on hover */
+}
+
+#order-summary {
+    padding: 15px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9; 
+    border-radius: 4px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+}
+
+#order-summary p {
+    margin: 5px 0;
+    color: #333; 
+
+}
+
+#order-summary button{
+    padding: 10px;
+    background-color: #ffc107; /* Consistent with home page button color */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px; /* Larger font size for the button */
+}
+
+.button{
+    padding: 30px;
+}
+
+#next-to-step-3{
+    margin-top: 20px;
+}
+
+#confirm-order{
+    padding: 10px;
+    background-color: #ffc107; 
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px; 
+}
+
+
+#back-to-step-2{
+
+    padding: 10px;
+    background-color: #ffc107; 
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px; 
+
+
+}
+@media (max-width: 768px) {
+    .checkout-step {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    .checkout-step form input,
+    .checkout-step form button {
+        font-size: 14px;
+    }
+}
+
