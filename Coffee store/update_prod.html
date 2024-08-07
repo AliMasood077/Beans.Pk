@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .product-list {
+            display: flex;
+            overflow-x: auto;
+            gap: 10px;
+        }
+
+        .product {
+            background: #eaeaea;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            height: 100px;
+        }
+
+        .form-group button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .message {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Update Product</h1>
+        <div class="product-list" id="product-list"></div>
+        <form id="update-product-form" style="display: none;">
+            <div class="form-group">
+                <label for="name">Product Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Price</label>
+                <input type="number" id="price" name="price" step="0.01" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="image">Image URL</label>
+                <input type="text" id="image" name="image" required>
+            </div>
+            <div class="form-group">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" name="quantity" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">Update Product</button>
+            </div>
+            <div class="message" id="message"></div>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const productList = document.getElementById("product-list");
+            const updateForm = document.getElementById("update-product-form");
+            const message = document.getElementById("message");
+
+            fetch('http://127.0.0.1:5000/api/products')
+                .then(response => response.json())
+                .then(products => {
+                    products.forEach(product => {
+                        const productDiv = document.createElement("div");
+                        productDiv.className = "product";
+                        productDiv.textContent = product.name;
+                        productDiv.onclick = () => {
+                            document.getElementById("name").value = product.name;
+                            document.getElementById("price").value = product.price;
+                            document.getElementById("description").value = product.description;
+                            document.getElementById("image").value = product.image;
+                            document.getElementById("quantity").value = product.quantity;
+                            updateForm.onsubmit = (e) => {
+                                e.preventDefault();
+                                updateProduct(product.id);
+                            };
+                            updateForm.style.display = "block";
+                        };
+                        productList.appendChild(productDiv);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+
+            function updateProduct(productId) {
+                const name = document.getElementById("name").value;
+                const price = document.getElementById("price").value;
+                const description = document.getElementById("description").value;
+                const image = document.getElementById("image").value;
+                const quantity = document.getElementById("quantity").value;
+
+                fetch(`http://127.0.0.1:5000/api/products/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, price, description, image, quantity })
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        message.textContent = result.message || result.error;
+                        message.className = result.error ? 'error' : 'success';
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        message.textContent = 'An error occurred while updating the product.';
+                        message.className = 'error';
+                    });
+            }
+        });
+    </script>
+</body>
+
+</html>

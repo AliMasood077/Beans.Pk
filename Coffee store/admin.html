@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            background-color: #e9ecef;
+        }
+        header {
+            width: 100%;
+            background-color:rgb(50, 51, 46);;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            padding-top: 80px;
+        }
+        .button-box {
+            background-color: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid #dee2e6;
+            text-align: center;
+        }
+        button {
+            display: block;
+            width: 220px;
+            padding: 15px;
+            margin: 15px auto;
+            font-size: 18px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Admin Panel
+    </header>
+    <div class="container">
+        <div class="button-box">
+            <button onclick="redirectTo('add-product.html')">Add product</button>
+            <button onclick="redirectTo('delete_prod.html')">delete any product</button>
+            <button onclick="redirectTo('update_prod.html')">update product details</button>
+            <button onclick="redirectTo('all_prod.html')">see all prod</button>
+        </div>
+    </div>
+    <script>
+        function redirectTo(fileName) {
+            window.location.href = fileName;
+        }
+    </script>
+</body>
+</html>

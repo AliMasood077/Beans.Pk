@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .product {
+            background: #eaeaea;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            flex: 1 1 30%;
+        }
+
+        .message {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 20px;
+        }
+
+        .success {
+            color: #28a745;
+        }
+
+        .error {
+            color: #dc3545;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Delete Product</h1>
+        <div class="product-list" id="product-list"></div>
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const productList = document.getElementById("product-list");
+            const message = document.getElementById("message");
+
+            fetch('http://127.0.0.1:5000/api/products')
+                .then(response => response.json())
+                .then(products => {
+                    products.forEach(product => {
+                        const productDiv = document.createElement("div");
+                        productDiv.className = "product";
+                        productDiv.textContent = product.name;
+                        productDiv.onclick = () => deleteProduct(product.id);
+                        productList.appendChild(productDiv);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+
+            function deleteProduct(productId) {
+                fetch(`http://127.0.0.1:5000/api/products/${productId}`, {
+                    method: 'DELETE',
+                })
+                    .then(response => response.json())
+                    .then(result => {
+                        message.textContent = result.message || result.error;
+                        message.className = result.error ? 'error' : 'success';
+                        if (!result.error) {
+                            const productDiv = Array.from(productList.children).find(div => div.textContent === result.name);
+                            if (productDiv) productList.removeChild(productDiv);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        message.textContent = 'An error occurred while deleting the product.';
+                        message.className = 'error';
+                    });
+            }
+        });
+    </script>
+</body>
+
+</html>

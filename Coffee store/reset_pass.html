@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Reset Password</title>
+</head>
+<body>
+    <h1>Reset Password</h1>
+    <form action="http://127.0.0.1:5000/forgot-password" method="post">
+        <input type="email" name="email" placeholder="Email"><br>
+        <input type="text" name="word" placeholder="Security Word"><br>
+        <button type="submit">Reset by Word</button>
+    </form>
+    <br>
+    <form action="http://127.0.0.1:5000/forgot-password" method="post">
+        <input type="text" name="username" placeholder="Username" required><br>
+        <button type="submit">Reset by Username</button>
+    </form>
+    <p><a href="login.html">Login</a></p>
+</body>
+</html>

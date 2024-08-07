@@ -1,11 +1,36 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Cart functionality
     const cartButton = document.getElementById("cart-button");
-    const itemButtons = document.querySelectorAll(".item-btn");
+    const itemContainer = document.getElementById("product-container");
 
-    itemButtons.forEach(button => {
-        button.addEventListener("click", addToCart);
-    });
+    // Fetch products from API and render them
+    fetch('http://127.0.0.1:5000/api/products')
+        .then(response => response.json())
+        .then(products => {
+            products.forEach(product => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('item-1');
+
+                itemDiv.innerHTML = `
+                    <img src="${product.image}" alt="">
+                    <p class="price"> $${parseFloat(product.price).toFixed(2)}</p>
+                    <p class="Name"> ${product.name}</p>
+                    <p class="taste"> ${product.description}</p>
+                    <p class="id">product id ${product.id}</p>
+                    <p class="id">Quantity ${product.quantity}</p>
+                    <button class="item-btn">Add to cart</button>
+                `;
+
+                itemContainer.appendChild(itemDiv);
+            });
+
+            // Add event listeners to dynamically added buttons
+            const itemButtons = document.querySelectorAll(".item-btn");
+            itemButtons.forEach(button => {
+                button.addEventListener("click", addToCart);
+            });
+        })
+        .catch(error => console.error('Error fetching products:', error));
 
     function addToCart(event) {
         const item = event.target.closest(".item-1");

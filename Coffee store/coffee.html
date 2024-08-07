@@ -55,9 +55,10 @@
         <div class="navbar-container">
             <div class="options">
                 <a href="coffee.html">Home</a>
-                <a href="about us.html">Account</a>
+                <a href="login.html">Account</a>
                 <a href="trainers.html">About us</a>
-                <a href="schedule.html">Contact us</a>
+                <a href="contact_us.html">Contact us</a>
+                <a href="admin.html">Admin Panel</a>
             </div>
             <div class="store">
                 <span class="store-icon">
@@ -103,104 +104,8 @@
         </div>
 
         <!-- Coffee Beans and Prices -->
-        <div class="item-container">
-            <h1>BEANS YOU ARE LOOKING FOR</h1>
-
-            <div class="item-1">
-                <img src="item-1.png" alt="">
-                <p class="price">$25.00</p>
-                <p class="Name">Caribbean Delight</p>
-                <p class="taste">Fruity, Bright, Sweet</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
-
-            <div class="item-1">
-                <img src="item-2.png" alt="">
-                <p class="price">$28.00</p>
-                <p class="Name">Ethiopian Sunrise</p>
-                <p class="taste">Floral, Citrus, Tangy</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
-
-            <div class="item-1">
-                <img src="item-3.png" alt="">
-                <p class="price">$22.00</p>
-                <p class="Name">Brazilian Bliss</p>
-                <p class="taste">Nutty, Smooth, Balanced</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
-
-            <div class="item-1">
-                <img src="item-4.png" alt="">
-                <p class="price">$30.00</p>
-                <p class="Name">Colombian Charm</p>
-                <p class="taste">Rich, Full-bodied, Cocoa</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
-
-            <div class="item-1">
-                <img src="item-5.png" alt="">
-                <p class="price">$32.00</p>
-                <p class="Name">Sumatran Serenity</p>
-                <p class="taste">Earthy, Spicy, Bold</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
-
-            <div class="item-1">
-                <img src="item-6.png" alt="">
-                <p class="price">$27.00</p>
-                <p class="Name">Guatemalan Glory</p>
-                <p class="taste">Bright, Fruity, Complex</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
-
-            <div class="item-1">
-                <img src="item-7.png" alt="">
-                <p class="price">$29.00</p>
-                <p class="Name">Costa Rican Classic</p>
-                <p class="taste">Balanced, Sweet, Nutty</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
-
-            <div class="item-1">
-                <img src="item-8.png" alt="">
-                <p class="price">$23.00</p>
-                <p class="Name">Peruvian Passion</p>
-                <p class="taste">Smooth, Mild, Floral</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
-
-            <div class="item-1">
-                <img src="item-9.png" alt="">
-                <p class="price">$24.00</p>
-                <p class="Name">Mexican Mocha</p>
-                <p class="taste">Chocolatey, Sweet, Smooth</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
-
-            <div class="item-1">
-                <img src="item-10.png" alt="">
-                <p class="price">$26.00</p>
-                <p class="Name">Indian Spice</p>
-                <p class="taste">Spicy, Bold, Rich</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
-
-            <div class="item-1">
-                <img src="item-11.png" alt="">
-                <p class="price">$31.00</p>
-                <p class="Name">Tanzanian Treasure</p>
-                <p class="taste">Bright, Tangy, Fruity</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
-
-            <div class="item-1">
-                <img src="item-12.png" alt="">
-                <p class="price">$33.00</p>
-                <p class="Name">Kenyan Kick</p>
-                <p class="taste">Bold, Fruity, Winey</p>
-                <button class="item-btn">Add to cart</button>
-            </div>
+        <div class="item-container" id="product-container">
+            <!-- Product items will be dynamically added here -->
         </div>
 
         <!-- Why Bazaar Section -->
@@ -259,11 +164,8 @@
         </div>
     </section>
 
-
     <footer>
-
         <div class="footer-container">
-          
             <div class="footer-1">
                 <ul>
                     <p>Beans.Pk</p>
@@ -274,19 +176,15 @@
                         <i id="twitter-icon" class="fa-brands fa-x-twitter"></i>
                     </div>
                 </ul> 
-            
                 <ul>
-                <span class="navigate">
-                    <p>Navigate</p>
-                    <a href="coffee.html">Home</a>
-                    <a>Account</a>
-                    <a>About Us</a>
-                    <a>Contact</a>
-                </span>
+                    <span class="navigate">
+                        <p>Navigate</p>
+                        <a href="coffee.html">Home</a>
+                        <a>Account</a>
+                        <a>About Us</a>
+                        <a>Contact</a>
+                    </span>
                 </ul>
-            
-               
-            
                 <ul>
                     <p>Supported Payment Methods</p>
                     <div class="payment-methods">
@@ -297,9 +195,6 @@
                     </div>
                 </ul>
             </div>
-            
-
-
         </div>
 
         <div class="footer-2-container">
@@ -307,10 +202,6 @@
                 <p>Copyright © 2024 Beans.Pk</p>
             </div>
         </div>
-
-
-
-
     </footer>
 
     <script src="coffee.js"></script>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - technologykibatain.com</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h2 {
+            text-align: left;
+            color: #4CAF50;
+        }
+        p {
+            text-align: justify;
+            margin-bottom: 20px;
+        }
+        .center {
+            text-align: center;
+        }
+        .contact-form-widget {
+            margin-top: 20px;
+        }
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="button"]:hover {
+            background-color: #45a049;
+        }
+        .contact-form-error-message, .contact-form-success-message {
+            text-align: center;
+            font-weight: bold;
+        }
+        .contact-form-error-message {
+            color: red;
+        }
+        .contact-form-success-message {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>We'll be happy to help you, fill the form below to contact us.</h2>
+        <p>We'd love to hear from you. It feels good when you send messages to us. If you encounter any issues related to broken links of any document or book, we update links of books/newspapers that are already on the internet. If any issue related to books copyright arises, please email us.</p>
+        <div class="center">
+            <p>Thanks and regards,<br />beans.pk Team, tech, pk</p>
+        </div>
+        <div class="contact-form-widget">
+            <div class="form">
+                <form name="contact-form">
+                    <label for="ContactForm1_contact-form-name">Name</label>
+                    <input class="contact-form-name" id="ContactForm1_contact-form-name" name="name" size="30" type="text" value="" />
+                    
+                    <label for="ContactForm1_contact-form-email">Email <span style="color: red;">*</span></label>
+                    <input class="contact-form-email" id="ContactForm1_contact-form-email" name="email" size="30" type="text" value="" />
+                    
+                    <label for="ContactForm1_contact-form-email-message">Message <span style="color: red;">*</span></label>
+                    <textarea class="contact-form-email-message" cols="25" id="ContactForm1_contact-form-email-message" name="email-message" rows="5"></textarea>
+                    
+                    <input class="contact-form-button contact-form-button-submit" id="ContactForm1_contact-form-submit" type="button" value="Send" />
+                    
+                    <div style="max-width: 222px; text-align: center; width: 100%;">
+                        <p class="contact-form-error-message" id="ContactForm1_contact-form-error-message"></p>
+                        <p class="contact-form-success-message" id="ContactForm1_contact-form-success-message"></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
