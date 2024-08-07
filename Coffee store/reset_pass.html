@@ -6,16 +6,71 @@
 </head>
 <body>
     <h1>Reset Password</h1>
-    <form action="http://127.0.0.1:5000/forgot-password" method="post">
-        <input type="email" name="email" placeholder="Email"><br>
-        <input type="text" name="word" placeholder="Security Word"><br>
-        <button type="submit">Reset by Word</button>
+    
+    <h2>Reset by Email and Word</h2>
+    <form id="resetByEmailForm">
+        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="text" name="word" placeholder="Secret Word" required><br>
+        <button type="submit">Reset Password</button>
     </form>
-    <br>
-    <form action="http://127.0.0.1:5000/forgot-password" method="post">
+    
+    <h2>Reset by Username</h2>
+    <form id="resetByUsernameForm">
         <input type="text" name="username" placeholder="Username" required><br>
-        <button type="submit">Reset by Username</button>
+        <button type="submit">Reset Password</button>
     </form>
-    <p><a href="login.html">Login</a></p>
+
+    <script>
+        document.getElementById('resetByEmailForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const email = document.querySelector('input[name="email"]').value;
+            const word = document.querySelector('input[name="word"]').value;
+
+            try {
+                const response = await fetch('http://127.0.0.1:5500/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ email, word }),
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message || 'Password reset instructions sent.');
+                } else {
+                    alert(result.error || 'Error resetting password.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while resetting the password');
+            }
+        });
+
+        document.getElementById('resetByUsernameForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const username = document.querySelector('input[name="username"]').value;
+
+            try {
+                const response = await fetch('http://127.0.0.1:5500/forgot-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ username }),
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    alert(result.message || 'Password reset instructions sent.');
+                } else {
+                    alert(result.error || 'Error resetting password.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while resetting the password');
+            }
+        });
+    </script>
 </body>
 </html>

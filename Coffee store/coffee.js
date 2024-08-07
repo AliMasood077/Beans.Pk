@@ -3,8 +3,13 @@ document.addEventListener("DOMContentLoaded", function () {
     const cartButton = document.getElementById("cart-button");
     const itemContainer = document.getElementById("product-container");
 
+    if (!itemContainer) {
+        console.error('Element #product-container not found');
+        return;
+    }
+
     // Fetch products from API and render them
-    fetch('http://127.0.0.1:5000/api/products')
+    fetch('http://127.0.0.1:5500/api/products') // Updated port
         .then(response => response.json())
         .then(products => {
             products.forEach(product => {
@@ -16,8 +21,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     <p class="price"> $${parseFloat(product.price).toFixed(2)}</p>
                     <p class="Name"> ${product.name}</p>
                     <p class="taste"> ${product.description}</p>
-                    <p class="id">product id ${product.id}</p>
-                    <p class="id">Quantity ${product.quantity}</p>
+                    <p class="id">Product ID: ${product.id}</p>
+                    <p class="id">Quantity: ${product.quantity}</p>
                     <button class="item-btn">Add to cart</button>
                 `;
 
@@ -55,7 +60,12 @@ document.addEventListener("DOMContentLoaded", function () {
         let total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
         let quantity = cart.reduce((acc, item) => acc + item.quantity, 0);
 
-        cartButton.querySelector("#cart-total").textContent = `$${total.toFixed(2)} (${quantity})`;
+        const cartTotalElement = cartButton.querySelector("#cart-total");
+        if (cartTotalElement) {
+            cartTotalElement.textContent = `$${total.toFixed(2)} (${quantity})`;
+        } else {
+            console.error('Element #cart-total not found inside #cart-button');
+        }
     }
 
     updateCartTotal();
@@ -92,7 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Store dropdown functionality
     const storeDropdown = document.getElementById("store-dropdown");
     const storeTitle = document.getElementById("store-title");
-    
+
     storeTitle.addEventListener("click", function () {
         if (storeDropdown.style.display === "none" || storeDropdown.style.display === "") {
             storeDropdown.style.display = "block";
@@ -108,4 +118,39 @@ document.addEventListener("DOMContentLoaded", function () {
             storeDropdown.style.display = "none";
         }
     });
+
+    // Login functionality
+    const loginForm = document.getElementById("login-form");
+
+    if (loginForm) {
+        loginForm.addEventListener("submit", function (event) {
+            event.preventDefault(); // Prevent the form from submitting the default way
+
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            // Example of calling the function 'a' with two parameters
+            a(email, password);
+
+            // Perform the login logic here
+            fetch('http://127.0.0.1:5500/api/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Login successful:', data);
+                // Handle login success
+            })
+            .catch(error => console.error('Login failed:', error));
+        });
+    }
+
+    
+
 });
+function a(username, userId) {
+    console.log(`Username: ${username}, UserID: ${userId}`);
+    alert(`Username: ${username}, UserID: ${userId}`);
+}

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, redirect, url_for, render_template
 from flask_cors import CORS
 import mysql.connector
 
@@ -134,10 +134,11 @@ def signup():
     
     return render_template('signup.html')
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
-    if request.method == 'POST':
-        data = request.form
+    try:
+        data = request.get_json()
+        
         email = data.get('email')
         password = data.get('password')
 
@@ -148,12 +149,15 @@ def login():
         cursor.close()
         conn.close()
 
-        if user and user['password'] == password:
-            return jsonify({'message': 'Login successful!', 'user': user}), 200
+        if user and user['password'] == password:  # Skipping hashing check for simplicity
+            return jsonify({'message': 'Login successful!', 'user': {'username': user['username'], 'id': user['id']}}), 200
         else:
             return jsonify({'error': 'Invalid email or password'}), 401
-    
-    return render_template('login.html')
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
 def forgot_password():
@@ -182,4 +186,4 @@ def forgot_password():
     return render_template('reset_pass.html')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5000, debug=True)  # Changed port to 5500

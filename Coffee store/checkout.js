@@ -35,7 +35,17 @@ document.addEventListener('DOMContentLoaded', function () {
         alert('Order confirmed! \n Thank you for Shopping at Beans.Pk');
         // Implement order confirmation logic
     });
-
+    function a(username, userId) {
+        console.log('Function a called with:', username, userId);
+        // Print the values
+        document.write('Username: ' + username + '<br>');
+        document.write('User ID: ' + userId + '<br>');
+        // Redirect to the admin.html page
+        setTimeout(function() {
+            window.location.href = 'coffee.html';
+        }, 2000); // Redirect after 2 seconds to allow time to print the values
+    }
+    
     function displayOrderSummary() {
         const cart = JSON.parse(localStorage.getItem('cart')) || [];
         orderSummary.innerHTML = '';
