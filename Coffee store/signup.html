@@ -3,10 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>Signup</title>
+    <script>
+        // This function redirects to the login page upon successful signup
+        function handleSignupResponse(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const formData = new FormData(event.target);
+
+            fetch(event.target.action, {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => {
+                if (response.ok) {
+                    // If the signup was successful, redirect to the login page
+                    window.location.href = 'coffee.html';
+                } else {
+                    // If there's an error, display it on the page
+                    return response.text().then(text => {
+                        document.getElementById('error-message').textContent = text;
+                    });
+                }
+            })
+            .catch(error => {
+                // If there's a network error, display a generic error message
+                document.getElementById('error-message').textContent = 'An error occurred. Please try again.';
+            });
+        }
+    </script>
 </head>
 <body>
     <h1>Signup</h1>
-    <form action="http://127.0.0.1:5000/signup" method="post">
+
+    <!-- Error message display area -->
+    <p id="error-message" style="color: red;"></p>
+
+    <form action="http://127.0.0.1:5000/api/signup" method="post" onsubmit="handleSignupResponse(event)">
         <input type="text" name="username" placeholder="Username" required><br>
         <input type="email" name="email" placeholder="Email" required><br>
         <input type="password" name="password" placeholder="Password" required><br>
@@ -17,6 +49,7 @@
         <input type="text" name="word" placeholder="Security Word (save this it is important)" required><br>
         <button type="submit">Signup</button>
     </form>
+
     <p><a href="login.html">Login</a></p>
 </body>
 </html>

@@ -97,9 +97,9 @@ def update_product(product_id):
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/api/signup', methods=['POST'])
 def signup():
-    if request.method == 'POST':
+    try:
         data = request.form
         username = data.get('username')
         email = data.get('email')
@@ -110,29 +110,39 @@ def signup():
         zipcode = data.get('zipcode')
         word = data.get('word')
 
+        # Check for missing fields
         if not all([username, email, password, address, country, city, zipcode, word]):
-            return jsonify({'error': 'Missing data fields'}), 400
+            return jsonify({'error': 'All fields are required!'}), 400
 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
+
+        # Get the max ID and increment for the new user
         cursor.execute("SELECT MAX(id) FROM users")
         max_id = cursor.fetchone()[0]
-        if max_id:
-            user_id = int(max_id) + 1
-        else:
-            user_id = 10000001
+        user_id = int(max_id) + 1 if max_id else 10000001
 
+        # Insert the new user into the database
         cursor.execute(
             "INSERT INTO users (id, username, email, password, address, country, city, zipcode, word) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
             (user_id, username, email, password, address, country, city, zipcode, word)
         )
         conn.commit()
+
+        logging.debug("User successfully inserted into the database.")
+
+        # Close the connection
         cursor.close()
         conn.close()
 
-        return redirect(url_for('login'))
-    
-    return render_template('signup.html')
+        logging.debug("Database connection closed successfully.")
+
+        # Return a success response
+        return jsonify({'message': 'Signup successful!'}), 200
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")
+        return jsonify({'error': 'Error during signup. Please try again.'}), 500
 
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -149,7 +159,8 @@ def login():
         cursor.close()
         conn.close()
 
-        if user and user['password'] == password:  # Skipping hashing check for simplicity
+        if user and user['password'] == password:  
+            print("log in success")
             return jsonify({'message': 'Login successful!', 'user': {'username': user['username'], 'id': user['id']}}), 200
         else:
             return jsonify({'error': 'Invalid email or password'}), 401
@@ -185,5 +196,35 @@ def forgot_password():
 
     return render_template('reset_pass.html')
 
+@app.route('/api/users', methods=['GET'])
+def get_users():
+    conn = mysql.connector.connect(**db_config)
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT id, username FROM users")
+    users = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jsonify(users)
+
+
+@app.route('/api/delete_user/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    try:
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM users WHERE id = %s", (user_id,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        if cursor.rowcount == 0:
+            return jsonify({'message': 'User not found.'}), 404
+        
+        return jsonify({'message': 'User deleted successfully!'}), 200
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)  # Changed port to 5500
+    app.run(host='', port=5000)
