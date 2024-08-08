@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Fetch products from API and render them
-    fetch('http://127.0.0.1:5500/api/products') // Updated port
+    fetch('http://127.0.0.1:5000/api/products') // Updated port
         .then(response => response.json())
         .then(products => {
             products.forEach(product => {
@@ -152,5 +152,4 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 function a(username, userId) {
     console.log(`Username: ${username}, UserID: ${userId}`);
-    alert(`Username: ${username}, UserID: ${userId}`);
 }
