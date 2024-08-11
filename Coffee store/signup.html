@@ -1,11 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Signup</title>
+    <style>
+        
+        body, h1, h2, p, a {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background-color: #333; 
+            padding: 15px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            justify-content: center; 
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 16px;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        .navbar a:hover {
+            background-color: #555; 
+        }
+
+        h1 {
+            margin-top: 100px;
+            margin-bottom: 10px;
+            color: #4CAF50; 
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #555;
+            font-size: 18px;
+            text-align: center;
+        }
+
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        form input[type="text"], form input[type="email"], form input[type="password"] {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        form button {
+            width: 84%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        form button:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            margin-top: 10px;
+        }
+
+        p a {
+            color: #4CAF50;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        p a:hover {
+            color: #388E3C;
+        }
+
+    </style>
 </head>
+
 <body>
-    <h1>Signup</h1>
+    <div class="navbar">
+        <a href="coffee.html">Home</a>
+        <a href="login.html">Account</a>
+        <a href="#">About us</a>
+        <a href="contact_us.html">Contact us</a>
+        <a href="admin.html">Admin Panel</a>
+    </div>
+
+    <h1>Signup Page</h1>
+    <h2>Create your account</h2>
     <form action="http://127.0.0.1:5000/signup" method="post">
         <input type="text" name="username" placeholder="Username" required><br>
         <input type="email" name="email" placeholder="Email" required><br>
@@ -18,5 +137,8 @@
         <button type="submit">Signup</button>
     </form>
     <p><a href="login.html">Login</a></p>
+
 </body>
+
 </html>
+
