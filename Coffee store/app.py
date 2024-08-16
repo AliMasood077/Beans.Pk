@@ -129,19 +129,17 @@ def signup():
         )
         conn.commit()
 
-        logging.debug("User successfully inserted into the database.")
+        logging.debug("User successfully inserted into the database.") # type: ignore
 
         # Close the connection
         cursor.close()
         conn.close()
 
-        logging.debug("Database connection closed successfully.")
-
         # Return a success response
         return jsonify({'message': 'Signup successful!'}), 200
 
     except Exception as e:
-        logging.error(f"An error occurred: {e}")
+        logging.error(f"An error occurred: {e}") # type: ignore
         return jsonify({'error': 'Error during signup. Please try again.'}), 500
 
 @app.route('/api/login', methods=['POST'])
