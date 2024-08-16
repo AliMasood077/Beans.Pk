@@ -68,6 +68,12 @@ header {
     padding: 10px 0;
 }
 
+.cart-item img {
+    width: 100px;
+    height: auto;
+    margin-right: 10px;
+}
+
 .cart-item-details {
     flex: 1;
     display: flex;

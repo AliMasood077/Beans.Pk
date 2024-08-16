@@ -7,31 +7,48 @@ document.addEventListener("DOMContentLoaded", function () {
     const discountCodeInput = document.getElementById("discount-code");
     const applyDiscountButton = document.getElementById("apply-discount");
 
-    function displayCartItems() {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    async function fetchCartItems() {
+        try {
+            const userId = 10000001; // Replace with the actual user ID
+            const response = await fetch(`/api/cart/${userId}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const cartItems = await response.json();
+            displayCartItems(cartItems);
+        } catch (error) {
+            console.error('Error fetching cart items:', error);
+            alert('Failed to load cart items. Please try again later.');
+        }
+    }
+
+    function displayCartItems(cartItems) {
         cartItemsContainer.innerHTML = "";
         let totalAmount = 0;
 
-        cart.forEach(item => {
+        cartItems.forEach(item => {
             const cartItem = document.createElement("div");
             cartItem.classList.add("cart-item");
             cartItem.innerHTML = `
+                <img src="${item.image}" alt="${item.name}">
                 <div class="cart-item-details">
                     <p class="item-name">${item.name}</p>
                     <p class="item-description">${item.description || 'No description available'}</p>
-                    <input type="number" value="${item.quantity}" min="1" class="quantity-input" data-name="${item.name}">
-                    <button class="remove-btn">Remove</button>
+                    <input type="number" value="${item.quantity}" min="1" class="quantity-input" data-id="${item.product_id}">
+                    <button class="remove-btn" data-id="${item.product_id}">Remove</button>
                 </div>
                 <p class="item-price">$<span class="item-price-value">${item.price.toFixed(2)}</span></p>
             `;
             cartItemsContainer.appendChild(cartItem);
 
-            cartItem.querySelector(".remove-btn").addEventListener("click", () => {
-                removeItem(item.name);
+            cartItem.querySelector(".remove-btn").addEventListener("click", (e) => {
+                removeItem(e.target.dataset.id);
             });
 
             cartItem.querySelector(".quantity-input").addEventListener("change", (e) => {
-                updateQuantity(item.name, parseInt(e.target.value));
+                updateQuantity(e.target.dataset.id, parseInt(e.target.value));
             });
 
             totalAmount += item.price * item.quantity;
@@ -40,41 +57,34 @@ document.addEventListener("DOMContentLoaded", function () {
         totalAmountSpan.textContent = totalAmount.toFixed(2);
     }
 
-    function removeItem(name) {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        cart = cart.filter(item => item.name !== name);
-        localStorage.setItem("cart", JSON.stringify(cart));
-        displayCartItems();
-        updateCartTotal();
+    async function removeItem(productId) {
+        try {
+            await fetch(`/api/cart/remove/${productId}`, { method: 'DELETE' });
+            fetchCartItems();
+        } catch (error) {
+            console.error('Error removing item:', error);
+            alert('Failed to remove item. Please try again later.');
+        }
     }
 
-    function updateQuantity(name, newQuantity) {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        cart = cart.map(item => {
-            if (item.name === name) {
-                item.quantity = newQuantity;
-            }
-            return item;
-        });
-        localStorage.setItem("cart", JSON.stringify(cart));
-        displayCartItems();
-        updateCartTotal();
-    }
-
-    function updateCartTotal() {
-        let cart = JSON.parse(localStorage.getItem("cart")) || [];
-        let total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-        let quantity = cart.reduce((acc, item) => acc + item.quantity, 0);
-
-        viewCartButton.querySelector("#cart-total").textContent = `$${total.toFixed(2)} (${quantity})`;
-        totalItemsSpan.textContent = quantity;
-        totalPriceSpan.textContent = total.toFixed(2);
+    async function updateQuantity(productId, newQuantity) {
+        try {
+            await fetch(`/api/cart/update/${productId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ quantity: newQuantity })
+            });
+            fetchCartItems();
+        } catch (error) {
+            console.error('Error updating quantity:', error);
+            alert('Failed to update quantity. Please try again later.');
+        }
     }
 
     function applyDiscount() {
         let discountCode = discountCodeInput.value.trim();
         let discount = 0;
-        
+
         // Example discount logic; replace with your own
         if (discountCode === "DISCOUNT10") {
             discount = 0.10;
@@ -89,6 +99,5 @@ document.addEventListener("DOMContentLoaded", function () {
 
     applyDiscountButton.addEventListener("click", applyDiscount);
 
-    displayCartItems();
-    updateCartTotal();
+    fetchCartItems();
 });

@@ -281,3 +281,49 @@ h1 {
         margin-bottom: 10px;
     }
 }
+.profile-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #ccc;
+    margin-right: 25px;
+    cursor: pointer; /* Change cursor to pointer to indicate clickability */
+}
+
+.profile-picture img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.dropdown {
+    display: none; /* Hidden by default */
+    position: absolute;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    right: 0; /* Align dropdown to the right edge */
+}
+
+.dropdown a {
+    color: black;
+    padding: 10px 12px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown a:hover {
+    background-color: #f1f1f1;
+}
+
+/* Show dropdown when hovering over the profile picture */
+.profile-container:hover .dropdown {
+    display: block;
+}

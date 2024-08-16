@@ -1,3 +1,97 @@
+let userid = 2;
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+
+    // Function to add an item to the cart
+    function addToCart(productId, productName, productPrice) {
+        // Check if the product is already in the cart
+        const existingItem = cart.find(item => item.productId === productId);
+
+        if (existingItem) {
+            // If the item already exists, increment its quantity
+            existingItem.quantity += 1;
+        } else {
+            // Otherwise, add the new item to the cart
+            const newItem = {
+                productId,
+                name: productName,
+                price: productPrice,
+                quantity: 1
+            };
+            cart.push(newItem);
+        }
+
+        // Save the updated cart to localStorage
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        // Update the cart total display
+        updateCartTotal();
+
+        // Get the current quantity of the product
+        const currentQuantity = cart.find(item => item.productId === productId).quantity;
+
+        // Show a notification that the item was added to the cart with the quantity
+        showNotification(productName, currentQuantity);
+    }
+
+    // Attach event listeners to all "Add to Cart" buttons
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+        button.addEventListener('click', function () {
+            const productId = this.getAttribute('data-product-id');
+            const productName = this.parentElement.querySelector('h3').innerText;
+            const productPrice = parseFloat(this.parentElement.querySelector('.price').innerText.replace('$', ''));
+
+            addToCart(productId, productName, productPrice);
+        });
+    });
+    function toggleDropdown() {
+
+    var dropdown = document.getElementById("dropdown-menu");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+}
+window.onclick = function(event) {
+    if (!event.target.closest('.profile-container')) {
+        var dropdown = document.getElementById("dropdown-menu");
+        dropdown.style.display = "none";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    
+    // let userSignedIn = false; 
+    let userProfilePicture = false; 
+
+    const profileImg = document.getElementById("profile-img");
+    const profileDropdown = document.getElementById("profile-dropdown");
+
+    
+    if (userid == -1) {
+
+        profileImg.src = "path/to/icon.png";
+        profileDropdown.innerHTML = `
+            <a href="login.html">Login</a>
+        `;
+
+   
+    }
+     else  {
+        if (userProfilePicture) {
+            profileImg.src = "item-1.png"; 
+        } else {
+            profileImg.src = "icon.png";
+        }
+
+        profileDropdown.innerHTML = `
+            <a href="/user/profile">My Profile</a>
+            <a href="/user/settings">Settings</a>
+            <a href="/logout">Logout</a>
+
+        `;
+    }
+});
+
+
 document.addEventListener("DOMContentLoaded", function () {
     // Cart functionality
     const cartButton = document.getElementById("cart-button");
@@ -23,6 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     <p class="taste"> ${product.description}</p>
                     <p class="id">Product ID: ${product.id}</p>
                     <p class="id">Quantity: ${product.quantity}</p>
+                    <p class="id">Store: ${product.store}</p>
                     <button class="item-btn">Add to cart</button>
                 `;
 
@@ -118,34 +213,6 @@ document.addEventListener("DOMContentLoaded", function () {
             storeDropdown.style.display = "none";
         }
     });
-
-    // Login functionality
-    const loginForm = document.getElementById("login-form");
-
-    if (loginForm) {
-        loginForm.addEventListener("submit", function (event) {
-            event.preventDefault(); // Prevent the form from submitting the default way
-
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
-
-            // Example of calling the function 'a' with two parameters
-            a(email, password);
-
-            // Perform the login logic here
-            fetch('http://127.0.0.1:5500/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Login successful:', data);
-                // Handle login success
-            })
-            .catch(error => console.error('Login failed:', error));
-        });
-    }
 
     
 
