@@ -67,7 +67,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const productTable = document.getElementById("product-table");
 
-            fetch('http://127.0.0.1:5500/api/products')
+            fetch('http://127.0.0.1:5000/api/products')
                 .then(response => response.json())
                 .then(products => {
                     products.forEach(product => {

@@ -209,11 +209,14 @@
 .store-dropdown ul li:hover {
     background-color: #f1ebe4d8;
 }
+<<<<<<< Updated upstream
 .profile-container {
     position: relative;
     display: inline-block;
 }
 
+=======
+>>>>>>> Stashed changes
 .profile-picture {
     width: 40px;
     height: 40px;
@@ -254,4 +257,8 @@
 /* Show dropdown when hovering over the profile picture */
 .profile-container:hover .dropdown {
     display: block;
+<<<<<<< Updated upstream
 }
+=======
+}
+>>>>>>> Stashed changes
