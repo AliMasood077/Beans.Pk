@@ -9,11 +9,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function fetchCartItems() {
         try {
-            const userId = 10000001; // Replace with the actual user ID
-            const response = await fetch(`/api/cart/${userId}`);
+            const userId = parseInt(localStorage.getItem('userid')); // Ensure userId is correctly set
+            if (!userId) {
+                throw new Error("User ID not found in local storage.");
+            }
+            const response = await fetch(`http://127.0.0.1:5000/api/cart/${userId}`);
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                throw new Error(`HTTP error! Status: ${response.status}`);
             }
 
             const cartItems = await response.json();
@@ -27,19 +30,24 @@ document.addEventListener("DOMContentLoaded", function () {
     function displayCartItems(cartItems) {
         cartItemsContainer.innerHTML = "";
         let totalAmount = 0;
+        let totalItems = 0;
 
         cartItems.forEach(item => {
             const cartItem = document.createElement("div");
-            cartItem.classList.add("cart-item");
+            cartItem.classList.add("cart-item-horizontal"); // New class for horizontal layout
             cartItem.innerHTML = `
                 <img src="${item.image}" alt="${item.name}">
                 <div class="cart-item-details">
                     <p class="item-name">${item.name}</p>
                     <p class="item-description">${item.description || 'No description available'}</p>
-                    <input type="number" value="${item.quantity}" min="1" class="quantity-input" data-id="${item.product_id}">
+                    <div class="quantity-controls">
+                        <button class="quantity-btn" data-id="${item.product_id}" data-action="decrement">-</button>
+                        <input type="number" value="${item.quantity}" min="1" class="quantity-input" data-id="${item.product_id}">
+                        <button class="quantity-btn" data-id="${item.product_id}" data-action="increment">+</button>
+                    </div>
                     <button class="remove-btn" data-id="${item.product_id}">Remove</button>
                 </div>
-                <p class="item-price">$<span class="item-price-value">${item.price.toFixed(2)}</span></p>
+                <p class="item-price">$<span class="item-price-value">${item.price}</span></p>
             `;
             cartItemsContainer.appendChild(cartItem);
 
@@ -47,19 +55,39 @@ document.addEventListener("DOMContentLoaded", function () {
                 removeItem(e.target.dataset.id);
             });
 
+            cartItem.querySelector(".quantity-btn[data-action='increment']").addEventListener("click", (e) => {
+                updateQuantity(e.target.dataset.id, parseInt(cartItem.querySelector(".quantity-input").value) + 1);
+            });
+
+            cartItem.querySelector(".quantity-btn[data-action='decrement']").addEventListener("click", (e) => {
+                const currentQuantity = parseInt(cartItem.querySelector(".quantity-input").value);
+                if (currentQuantity > 1) {
+                    updateQuantity(e.target.dataset.id, currentQuantity - 1);
+                }
+            });
+
             cartItem.querySelector(".quantity-input").addEventListener("change", (e) => {
                 updateQuantity(e.target.dataset.id, parseInt(e.target.value));
             });
 
             totalAmount += item.price * item.quantity;
+            totalItems += item.quantity;
         });
 
         totalAmountSpan.textContent = totalAmount.toFixed(2);
+        totalItemsSpan.textContent = totalItems;
     }
 
     async function removeItem(productId) {
         try {
-            await fetch(`/api/cart/remove/${productId}`, { method: 'DELETE' });
+            const userId = parseInt(localStorage.getItem('userid'));
+            if (!userId) {
+                throw new Error("User ID not found in local storage.");
+            }
+            const response = await fetch(`http://127.0.0.1:5000/api/cart/remove/${userId}/${productId}`, { method: 'DELETE' });
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
             fetchCartItems();
         } catch (error) {
             console.error('Error removing item:', error);
@@ -69,10 +97,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function updateQuantity(productId, newQuantity) {
         try {
-            await fetch(`/api/cart/update/${productId}`, {
+            const userId = parseInt(localStorage.getItem('userid'));
+            if (!userId) {
+                throw new Error("User ID not found in local storage.");
+            }
+            await fetch(`http://127.0.0.1:5000/api/cart/update`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ quantity: newQuantity })
+                body: JSON.stringify({ user_id: userId, product_id: productId, quantity: newQuantity })
             });
             fetchCartItems();
         } catch (error) {
