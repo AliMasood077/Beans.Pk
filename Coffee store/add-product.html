@@ -121,20 +121,12 @@
         document.getElementById('add-product-form').addEventListener('submit', function (event) {
             event.preventDefault();
 
-            // Collect form data
             const name = document.getElementById('name').value;
             const price = parseFloat(document.getElementById('price').value);
             const description = document.getElementById('description').value;
             const image = document.getElementById('image').value;
             const quantity = parseInt(document.getElementById('quantity').value);
-            const store = document.getElementById('store').value;
-
-            // Validate inputs
-            if (!name || !price || isNaN(price) || !description || !image || !quantity || isNaN(quantity) || !store) {
-                document.getElementById('message').textContent = 'Please fill all fields with valid data.';
-                document.getElementById('message').className = 'message error';
-                return;
-            }
+            const store = document.getElementById('store').value; // Changed to text
 
             const productData = {
                 name: name,
@@ -145,34 +137,26 @@
                 store: store
             };
 
-            fetch('http://127.0.0.1:5000/api/add', {
+            fetch('http://127.0.0.1:5000/api/products', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(productData)
             })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Server responded with status ${response.status}`);
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(data => {
                 if (data.message) {
                     document.getElementById('message').textContent = data.message;
                     document.getElementById('message').className = 'message success';
                     document.getElementById('add-product-form').reset();
-                } else if (data.error) {
-                    document.getElementById('message').textContent = data.error;
-                    document.getElementById('message').className = 'message error';
                 } else {
-                    document.getElementById('message').textContent = 'Unexpected error. Please try again.';
+                    document.getElementById('message').textContent = 'Error adding product. Please try again.';
                     document.getElementById('message').className = 'message error';
                 }
             })
             .catch(error => {
-                document.getElementById('message').textContent = `Error adding product: ${error.message}`;
+                document.getElementById('message').textContent = 'Error adding product. Please try again.';
                 document.getElementById('message').className = 'message error';
                 console.error('Error:', error);
             });

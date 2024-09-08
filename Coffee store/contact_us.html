@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Beans.pk</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .header {
+            background-color: rgb(50, 51, 46);
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+            font-size: 14px;
+        }
+        .navbar {
+            background-color: rgb(50, 51, 46);
+            overflow: hidden;
+        }
+        .navbar a {
+            float: left;
+            display: block;
+            color: white;
+            text-align: center;
+            padding: 14px 20px;
+            text-decoration: none;
+            font-size: 17px;
+        }
+        .navbar a:hover {
+            /* background-color: #ddd; */
+            color: #f1ebe4;
+            text-decoration: underline;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        h2 {
+            text-align: left;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+        p {
+            text-align: justify;
+            margin-bottom: 20px;
+        }
+        .center {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .contact-form-widget {
+            margin-top: 20px;
+        }
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input[type="button"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        input[type="button"]:hover {
+            background-color: #45a049;
+        }
+        .contact-form-error-message, .contact-form-success-message {
+            text-align: center;
+            font-weight: bold;
+        }
+        .contact-form-error-message {
+            color: red;
+        }
+        .contact-form-success-message {
+            color: green;
+        }
+     
+    </style>
+</head>
+<body>
+    
+    <div class="navbar">
+        <!-- <img class="logo" src="Brown_Vintage_Coffee_Shop_Logo__2_-removebg-preview.png" alt="Beans.pk Logo"> -->
+        <a href="coffee.html">Home</a>
+        <a href="login.html">Account</a>
+        <a href="#">About us</a>
+        <a href="contact_us.html">Contact us</a>
+        <a href="admin.html">Admin Panel</a>
+    
+    </div>
+    <div class="container">
+        <h2>Contact Us</h2>
+        <p>If you have any questions, feedback, or issues, please reach out to us. We value your input and are here to assist you. If you encounter any problems with broken links or have concerns regarding copyrights, do not hesitate to get in touch with us.</p>
+        <div class="center">
+            <p>Thank you and best regards,<br /><b> Beans.pk Team</b></p>
+        </div>
+        <div class="contact-form-widget">
+            <div class="form">
+                <form name="contact-form">
+                    <label for="ContactForm1_contact-form-name">Name</label>
+                    <input class="contact-form-name" id="ContactForm1_contact-form-name" name="name" size="30" type="text" value="" required />
+                    
+                    <label for="ContactForm1_contact-form-email">Email <span style="color: red;">*</span></label>
+                    <input class="contact-form-email" id="ContactForm1_contact-form-email" name="email" size="30" type="text" value="" required />
+                    
+                    <label for="ContactForm1_contact-form-email-message">Message <span style="color: red;">*</span></label>
+                    <textarea class="contact-form-email-message" cols="25" id="ContactForm1_contact-form-email-message" name="email-message" rows="5" required></textarea>
+                    
+                    <input class="contact-form-button contact-form-button-submit" id="ContactForm1_contact-form-submit" type="button" value="Send" />
+                    
+                    <div style="max-width: 222px; text-align: center; width: 100%;">
+                        <p class="contact-form-error-message" id="ContactForm1_contact-form-error-message"></p>
+                        <p class="contact-form-success-message" id="ContactForm1_contact-form-success-message"></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

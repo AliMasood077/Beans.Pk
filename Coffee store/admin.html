@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            width: 100%;
+            background-color: #343a40;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100%;
+            padding-top: 80px;
+            box-sizing: border-box;
+        }
+        .button-box {
+            background-color: #ffffff;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 1px solid #dee2e6;
+            text-align: center;
+            width: 80%;
+            max-width: 600px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        button:active {
+            background-color: #004494;
+            transform: translateY(0);
+        }
+        @media (max-width: 768px) {
+            .button-box {
+                padding: 20px;
+                width: 90%;
+            }
+            button {
+                font-size: 14px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        Admin Panel
+    </header>
+    <div class="container">
+        <div class="button-box">
+            <button onclick="redirectTo('add-product.html')">Add Product</button>
+            <button onclick="redirectTo('delete_prod.html')">Delete Product</button>
+            <button onclick="redirectTo('update_prod.html')">Update Product</button>
+            <button onclick="redirectTo('all_prod.html')">See All Products</button>
+            <button onclick="redirectTo('delete_user.html')">delete all user</button>
+        </div>
+    </div>
+    <script>
+        function redirectTo(fileName) {
+            window.location.href = fileName;
+        }
+    </script>
+</body>
+</html>
+

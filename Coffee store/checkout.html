@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Beans.pk</title>
+    <link rel="stylesheet" href="checkout.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <!-- <div class="header-1">
+                <img class="logo" src="Brown_Vintage_Coffee_Shop_Logo__2_-removebg-preview.png" alt="Beans.pk Logo">
+            </div> -->
+            <h1>Beans.pk Checkout</h1>
+        </div>
+    </header>
+
+    <section id="checkout-section">
+        <div id="step-1" class="checkout-step">
+            <h2>Shipping Details</h2>
+            <form id="shipping-form">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" required>
+                <label for="city">City</label>
+                <input type="text" id="city" name="city" required>
+                <label for="zip">ZIP Code</label>
+                <input type="text" id="zip" name="zip" required>
+                <button type="button" id="next-to-step-2">Next</button>
+            </form>
+        </div>
+
+        <div id="step-2" class="checkout-step" style="display: none;">
+            <h2>Payment Information</h2>
+            <form id="payment-form">
+                <label for="contact-number">Contact Number</label>
+                <input type="text" id="contact-number" name="contact-number" required>
+                <label for="street-name">Street Name</label>
+                <input type="text" id="street-name" name="street-name" required>
+                <label for="payment-method">Payment Method</label>
+                <select id="payment-method" name="payment-method" required>
+                    <option value="card">Card</option>
+                    <option value="cash">Cash</option>
+                </select>
+
+                <button type="button" id="next-to-step-3">Next</button><br>
+                <button type="button" id="back-to-step-1">Back</button>
+            </form>
+        </div>
+
+        <div id="step-3" class="checkout-step" style="display: none;">
+            <h2>Confirm Order</h2>
+            <div id="order-summary"></div>
+            <button type="button" id="confirm-order">Confirm Order</button>
+            <button type="button" id="back-to-step-2">Back</button>
+        </div>
+    </section>
+
+    <script src="checkout.js"></script>
+</body>
+
+</html>
