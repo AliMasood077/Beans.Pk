@@ -1,16 +1,14 @@
-let userid  ;
+let userid;
 let u_name = "";
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Function to add an item to the cart
 function addToCart(productId) {
-    // Prepare data to be sent to the API
     const data = {
-        user_id: userid, // Ensure userId is correctly set and retrieved from local storage
+        user_id: userid, 
         product_id: productId
     };
 
-    // Send data to the API
     fetch('http://127.0.0.1:5000/api/add_to_cart', {
         method: 'POST',
         headers: {
@@ -28,13 +26,11 @@ function addToCart(productId) {
             // showNotification('Product added to cart'); // Display success notification
         }
     })
-    .catch((error) => {
+    .catch(error => {
         console.error('Error:', error);
         // showErrorNotification('Failed to add product to cart'); // Display error notification
     });
 }
-
-
 
 // Function to update the cart total
 function updateCartTotal() {
@@ -55,7 +51,6 @@ function toggleDropdown() {
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
 }
 
-  
 document.addEventListener("DOMContentLoaded", function () {
     // Profile dropdown handling
     userid = parseInt(localStorage.getItem('userid')) || 0;
@@ -64,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const profileDropdown = document.getElementById("profile-dropdown");
 
     if (userid == 0) {
-        profileImg.src = "path/to/icon.png";
+        profileImg.src = "icon.png";
         profileDropdown.innerHTML = `<a href="login.html">Login</a>`;
     } else {
         profileImg.src = userProfilePicture ? "item-1.png" : "icon.png";
@@ -74,22 +69,27 @@ document.addEventListener("DOMContentLoaded", function () {
             <a href="/logout" id="logoutLink">Logout</a>
         `;
     }
+
     // Logout function
-document.getElementById('logoutLink').addEventListener('click', function(event) {
-    event.preventDefault();
-    localStorage.clear();
-    // Set userid to 0 to represent logged-out state
-    localStorage.setItem('userid', 0);
-    // Update the UI to reflect the logged-out state
-    const profileImg = document.getElementById("profile-img");
-    const profileDropdown = document.getElementById("profile-dropdown");
+    const logoutLink = document.getElementById('logoutLink');
+    if (logoutLink) {
+        logoutLink.addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent the default link behavior
 
-    profileImg.src = "path/to/icon.png";
-    profileDropdown.innerHTML = `<a href="login.html">Login</a>`;
+            // Clear all data in localStorage
+            localStorage.clear();
 
-    window.location.reload();
-    console.log(userid);
-});
+            // Set 'userid' to 0 to represent the logged-out state
+            localStorage.setItem('userid', 0);
+
+            // Update the UI to reflect the logged-out state
+            profileImg.src = "icon.png"; // Replace with the correct path to your default icon
+            profileDropdown.innerHTML = `<a href="login.html">Login</a>`;
+
+            // Refresh the page to reflect the changes
+            window.location.reload();
+        });
+    }
 
     const itemContainer = document.getElementById("product-container");
 
@@ -132,7 +132,7 @@ document.getElementById('logoutLink').addEventListener('click', function(event) 
 
     // Initialize cart total display
     updateCartTotal();
-    userid = localStorage.getItem('userid');
+
     // Carousel functionality
     const offers = [
         `User ID: ${userid}`,
@@ -176,5 +176,4 @@ document.getElementById('logoutLink').addEventListener('click', function(event) 
             storeDropdown.style.display = "none";
         }
     });
-    
 });

@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const totalAmountSpan = document.getElementById("total-amount");
     const totalItemsSpan = document.getElementById("total-items");
     const totalPriceSpan = document.getElementById("total-price");
-    const viewCartButton = document.getElementById("view-cart-button");
     const discountCodeInput = document.getElementById("discount-code");
     const applyDiscountButton = document.getElementById("apply-discount");
 

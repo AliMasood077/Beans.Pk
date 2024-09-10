@@ -218,14 +218,3 @@
 
 
 </html>
-<script>
-    // Get user data from localStorage
-    const user = JSON.parse(localStorage.getItem('user'));
-
-    if (user) {
-        // Call a() function with user data
-        a(user.username, user.userId);
-    } else {
-        console.log('No user data found in localStorage.');
-    }
-</script>
