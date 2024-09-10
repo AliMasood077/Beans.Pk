@@ -57,6 +57,7 @@
                     <th>Description</th>
                     <th>Image</th>
                     <th>Quantity</th>
+                    <th>Store</th>
                 </tr>
             </thead>
             <tbody id="product-table"></tbody>
@@ -67,7 +68,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const productTable = document.getElementById("product-table");
 
-            fetch('http://127.0.0.1:5500/api/products')
+            fetch('http://127.0.0.1:5000/api/products')
                 .then(response => response.json())
                 .then(products => {
                     products.forEach(product => {
@@ -75,9 +76,10 @@
                         row.innerHTML = `
                             <td>${product.name}</td>
                             <td>${product.price}</td>
-                            <td>${product.description}</td>
+                            <td>${product.description}</td>:q
                             <td><img src="${product.image}" alt="${product.name}" width="50"></td>
                             <td>${product.quantity}</td>
+                            <td>${product.store}</td>
                         `;
                         productTable.appendChild(row);
                     });

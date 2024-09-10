@@ -130,49 +130,53 @@
     <p><a href="forgot-password.html">Forgot Password?</a></p>
 
 
+    <script src="coffee.js"></script>
+    <script>    
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+    event.preventDefault();
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(event) {
-            event.preventDefault();
+    // Get form data
+    const formData = new FormData(document.getElementById('loginForm'));
 
-            // Get form data
-            const formData = new FormData(document.getElementById('loginForm'));
+    // Convert FormData to JSON
+    const data = {};
+    formData.forEach((value, key) => {
+        data[key] = value;
+    });
 
-            // Convert FormData to JSON
-            const data = {};
-            formData.forEach((value, key) => {
-                data[key] = value;
-            });
-
-            try {
-                const response = await fetch('http://127.0.0.1:5000/api/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    console.log('Login successful:', result);
-                    
-                    // Redirect to home page or another page
-                    window.location.href = 'coffee.html';
-                } else {
-                    alert(result.error || 'Login failed');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred during login');
-            }
+    try {
+        const response = await fetch('http://127.0.0.1:5000/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
         });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log('Login successful:', result);
+            u_name=result.user.username; 
+            userid=result.user.id;
+            localStorage.setItem('userid', userid);
+            alert(userid);
+            // Redirect to home page or another page
+            window.location.href = 'coffee.html';
+        } else {
+            alert(result.error || 'Login failed');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred during login');
+    }
+});
     </script>
+    
+    
 
 
 
 </body>
 
 </html>
-

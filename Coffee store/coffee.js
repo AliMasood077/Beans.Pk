@@ -1,22 +1,40 @@
-let userid = 2;
+let userid  ;
 let u_name = "";
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
 // Function to add an item to the cart
-function addToCart(productId, productName, productPrice) {
-    const existingItem = cart.find(item => item.productId === productId);
+function addToCart(productId) {
+    // Prepare data to be sent to the API
+    const data = {
+        user_id: userid, // Ensure userId is correctly set and retrieved from local storage
+        product_id: productId
+    };
 
-    if (existingItem) {
-        existingItem.quantity += 1;
-    } else {
-        cart.push({ productId, name: productName, price: productPrice, quantity: 1 });
-    }
-
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartTotal();
-    const currentQuantity = cart.find(item => item.productId === productId).quantity;
-    showNotification(productName, currentQuantity);
+    // Send data to the API
+    fetch('http://127.0.0.1:5000/api/add_to_cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error('Error:', data.error);
+            showErrorNotification(data.error); // Display error notification
+        } else {
+            console.log('Success:', data.message);
+            // showNotification('Product added to cart'); // Display success notification
+        }
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+        // showErrorNotification('Failed to add product to cart'); // Display error notification
+    });
 }
+
+
 
 // Function to update the cart total
 function updateCartTotal() {
@@ -37,32 +55,42 @@ function toggleDropdown() {
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
 }
 
-// Close dropdown when clicking outside
-window.onclick = function(event) {
-    if (!event.target.closest('.profile-container')) {
-        document.getElementById("dropdown-menu").style.display = "none";
-    }
-}
-
+  
 document.addEventListener("DOMContentLoaded", function () {
     // Profile dropdown handling
+    userid = parseInt(localStorage.getItem('userid')) || 0;
     let userProfilePicture = false;
     const profileImg = document.getElementById("profile-img");
     const profileDropdown = document.getElementById("profile-dropdown");
 
-    if (userid == -1) {
+    if (userid == 0) {
         profileImg.src = "path/to/icon.png";
         profileDropdown.innerHTML = `<a href="login.html">Login</a>`;
     } else {
         profileImg.src = userProfilePicture ? "item-1.png" : "icon.png";
         profileDropdown.innerHTML = `
             <a href="/user/profile">My Profile</a>
-            <a href="/user/settings">Settings</a>
-            <a href="/logout">Logout</a>
+            <a href="settings.html">Settings</a>
+            <a href="/logout" id="logoutLink">Logout</a>
         `;
     }
+    // Logout function
+document.getElementById('logoutLink').addEventListener('click', function(event) {
+    event.preventDefault();
+    localStorage.clear();
+    // Set userid to 0 to represent logged-out state
+    localStorage.setItem('userid', 0);
+    // Update the UI to reflect the logged-out state
+    const profileImg = document.getElementById("profile-img");
+    const profileDropdown = document.getElementById("profile-dropdown");
 
-    // Fetch products and render them
+    profileImg.src = "path/to/icon.png";
+    profileDropdown.innerHTML = `<a href="login.html">Login</a>`;
+
+    window.location.reload();
+    console.log(userid);
+});
+
     const itemContainer = document.getElementById("product-container");
 
     if (itemContainer) {
@@ -104,10 +132,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Initialize cart total display
     updateCartTotal();
-
+    userid = localStorage.getItem('userid');
     // Carousel functionality
     const offers = [
-        "Save 20% use code: Pakistan123",
+        `User ID: ${userid}`,
+        "Save 20% use code: Pakistan123 ",
         "Free shipping on orders over $50!",
         "Buy 2 get 1 free on select beans!"
     ];
@@ -147,10 +176,5 @@ document.addEventListener("DOMContentLoaded", function () {
             storeDropdown.style.display = "none";
         }
     });
+    
 });
-
-function a(username, userId) {
-    u_name = username;
-    userid = userId;
-    console.log(`Username: ${username}, UserID: ${userId}`);
-}
