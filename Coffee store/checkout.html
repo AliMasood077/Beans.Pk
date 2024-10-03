@@ -11,9 +11,6 @@
 <body>
     <header>
         <div class="header-container">
-            <!-- <div class="header-1">
-                <img class="logo" src="Brown_Vintage_Coffee_Shop_Logo__2_-removebg-preview.png" alt="Beans.pk Logo">
-            </div> -->
             <h1>Beans.pk Checkout</h1>
         </div>
     </header>
@@ -54,9 +51,27 @@
 
         <div id="step-3" class="checkout-step" style="display: none;">
             <h2>Confirm Order</h2>
-            <div id="order-summary"></div>
-            <button type="button" id="confirm-order">Confirm Order</button>
-            <button type="button" id="back-to-step-2">Back</button>
+            <div>
+                <label>
+                    <input type="radio" name="cartOption" id="allCart" value="all">
+                    All Cart
+                </label>
+                <label>
+                    <input type="radio" name="cartOption" id="selectFromCart" value="select">
+                    Select from Cart
+                </label>
+            </div>
+            
+            <!-- Container for dynamically generated cart items -->
+            <div id="cart-items-container" style="display: none;"></div>
+
+            <!-- Total amount -->
+            <div id="total-amount">
+                <p>Total: $<span id="total-price">0.00</span></p>
+            </div>
+
+            <!-- Confirm Order button -->
+            <button id="confirm-order">Confirm Order</button>
         </div>
     </section>
 

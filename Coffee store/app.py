@@ -153,6 +153,53 @@ def signup():
         logging.error(f"An error occurred: {e}") # type: ignore
         return jsonify({'error': 'Error during signup. Please try again.'}), 500
 
+@app.route('/api/vendor_signup', methods=['POST'])
+def V_signup():
+    try:
+        data = request.form
+        vendor_name = data.get('username')  # Updated to match the schema
+        email = data.get('email')
+        password = data.get('password')
+        address = data.get('address')
+        store_name = data.get('store_name')  # Get store name
+        phone_number = data.get('phone_number')  # Added phone number
+
+        # Check for missing fields
+        if not all([vendor_name, email, password, address, store_name, phone_number]):
+            return jsonify({'error': 'All fields are required!'}), 400
+
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor()
+
+        # Check if the store name is unique
+        cursor.execute("SELECT store_name FROM vendor WHERE store_name = %s", (store_name,))
+        if cursor.fetchone():
+            return jsonify({'error': 'Store name must be unique!'}), 400
+
+        # Insert the new vendor into the database
+        cursor.execute(
+            "INSERT INTO vendor (vendor_name, email, password, phone_number, address, store_name) "
+            "VALUES (%s, %s, %s, %s, %s, %s)",
+            (vendor_name, email, password, phone_number, address, store_name)
+        )
+        conn.commit()
+
+        logging.debug("Vendor successfully inserted into the database.")  # type: ignore
+
+        # Close the connection
+        cursor.close()
+        conn.close()
+
+        # Return a success response
+        return jsonify({'message': 'Signup successful!'}), 200
+
+    except Exception as e:
+        logging.error(f"An error occurred: {e}")  # type: ignore
+        return jsonify({'error': 'Error during signup. Please try again.'}), 500
+
+
+
+
 @app.route('/api/login', methods=['POST'])
 def login():
     try:
@@ -263,10 +310,6 @@ def get_cart(user_id):
         """, (user_id,))
         
         cart_items = cursor.fetchall()
-
-        # Debugging: Print the fetched cart items
-        print("Cart items fetched from the database:", cart_items)
-
         cursor.close()
         conn.close()
         return jsonify(cart_items), 200
@@ -353,7 +396,9 @@ def add_to_cart():
         data = request.get_json()
         user_id = data.get('user_id')
         product_id = data.get('product_id')
+        print(user_id , product_id)
         # Check for missing fields
+        
         if not all([user_id, product_id]):
             return jsonify({'error': 'Missing data fields'}), 400
 
