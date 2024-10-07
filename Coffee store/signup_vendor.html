@@ -20,8 +20,8 @@
                     window.location.href = 'coffee.html';
                 } else {
                     // If there's an error, display it on the page
-                    return response.text().then(text => {
-                        document.getElementById('error-message').textContent = text;
+                    return response.json().then(data => {
+                        document.getElementById('error-message').textContent = data.error;
                     });
                 }
             })
@@ -156,10 +156,10 @@
     <p id="error-message" style="color: red;"></p>
 
     <form action="http://127.0.0.1:5000/api/vendor_signup" method="post" onsubmit="handleSignupResponse(event)">
-        <input type="text" name="vendor_name" placeholder="Vendor Name" required><br> <!-- Renamed to vendor_name -->
+        <input type="text" name="vendor_name" placeholder="Vendor Name" required><br>
         <input type="email" name="email" placeholder="Email" required><br>
         <input type="password" name="password" placeholder="Password" required><br>
-        <input type="text" name="store_name" placeholder="Store Name" required><br> <!-- Added store_name -->
+        <input type="text" name="store_name" placeholder="Store Name" required><br>
         <input type="text" name="address" placeholder="Address" required><br>
         <input type="text" name="phone_number" placeholder="Phone number"><br>
         <button type="submit">Signup</button>

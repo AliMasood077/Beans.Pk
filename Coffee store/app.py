@@ -154,53 +154,56 @@ def signup():
         return jsonify({'error': 'Error during signup. Please try again.'}), 500
 
 @app.route('/api/vendor_signup', methods=['POST'])
-def V_signup():
+def vendor_signup():
     try:
         data = request.form
-        vendor_name = data.get('username')  # Updated to match the schema
+        vendor_name = data.get('vendor_name')
         email = data.get('email')
         password = data.get('password')
+        store_name = data.get('store_name')
         address = data.get('address')
-        store_name = data.get('store_name')  # Get store name
-        phone_number = data.get('phone_number')  # Added phone number
+        phone_number = data.get('phone_number')
 
         # Check for missing fields
-        if not all([vendor_name, email, password, address, store_name, phone_number]):
-            return jsonify({'error': 'All fields are required!'}), 400
+        if not all([vendor_name, email, password, store_name, address]):
+            return jsonify({'error': 'All required fields (vendor name, email, password, store name, address) must be filled!'}), 400
 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
 
-        # Check if the store name is unique
-        cursor.execute("SELECT store_name FROM vendor WHERE store_name = %s", (store_name,))
-        if cursor.fetchone():
-            return jsonify({'error': 'Store name must be unique!'}), 400
+        # Check if the email or store_name already exists
+        cursor.execute("SELECT * FROM vendor WHERE email=%s OR store_name=%s", (email, store_name))
+        existing_vendor = cursor.fetchone()
+
+        if existing_vendor:
+            return jsonify({'error': 'A vendor with this email or store name already exists.'}), 401
 
         # Insert the new vendor into the database
         cursor.execute(
-            "INSERT INTO vendor (vendor_name, email, password, phone_number, address, store_name) "
-            "VALUES (%s, %s, %s, %s, %s, %s)",
-            (vendor_name, email, password, phone_number, address, store_name)
+            "INSERT INTO vendor (vendor_name, email, password, store_name, address, phone_number, status) "
+            "VALUES (%s, %s, %s, %s, %s, %s, 'non active')",
+            (vendor_name, email, password, store_name, address, phone_number)
         )
         conn.commit()
 
-        logging.debug("Vendor successfully inserted into the database.")  # type: ignore
 
         # Close the connection
         cursor.close()
         conn.close()
 
         # Return a success response
-        return jsonify({'message': 'Signup successful!'}), 200
+        return jsonify({'message': 'Vendor signup successful!'}), 200
 
     except Exception as e:
         logging.error(f"An error occurred: {e}")  # type: ignore
-        return jsonify({'error': 'Error during signup. Please try again.'}), 500
+        return jsonify({'error': 'Error during vendor signup. Please try again.'}), 500
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
 
 
-@app.route('/api/login', methods=['POST'])
 def login():
     try:
         data = request.get_json()
@@ -229,6 +232,38 @@ def login():
             cursor.close()
         if conn:
             conn.close()
+
+
+@app.route('/api/login_vendor', methods=['POST'])
+def login_vendor():
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+
+        if not email or not password:
+            return jsonify({'error': 'Email and password are required'}), 400
+
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM vendor WHERE email = %s", (email,))
+        user = cursor.fetchone()
+
+        if vendor and vendor['password'] == password:
+            return jsonify({'message': 'Login successful!', 'vendor': {'vendor_name': vendor['vendor_name'], 'vendor_id': vendor['vendor_id']}}), 200
+        else:
+            return jsonify({'error': 'Invalid email or password'}), 401
+    except mysql.connector.Error as err:
+        return jsonify({'error': f'Database error: {str(err)}'}), 500
+    except Exception as e:
+        return jsonify({'error': f'An unexpected error occurred: {str(e)}'}), 500
+    finally:
+        # Ensure the cursor and connection are closed even if an error occurs
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
 
 
 @app.route('/forgot-password', methods=['GET', 'POST'])
