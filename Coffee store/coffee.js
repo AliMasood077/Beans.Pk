@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         <p class="taste">${product.description}</p>
                         <p class="id">Product ID: ${product.id}</p>
                         <p class="id">Quantity: ${product.quantity}</p>
-                        <p class="id">Store: ${product.store}</p>
+                        <p class="id">Category: ${product.category}</p>
                         <button class="item-btn" data-product-id="${product.id}">Add to cart</button>
                     `;
                     itemContainer.appendChild(itemDiv);

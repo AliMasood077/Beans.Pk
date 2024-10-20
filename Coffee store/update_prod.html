@@ -120,8 +120,8 @@
                 <input type="number" id="quantity" name="quantity" required>
             </div>
             <div class="form-group">
-                <label for="store">Store</label>
-                <input type="text" id="store" name="store" required>
+                <label for="category">Store</label>
+                <input type="text" id="category" name="category" required>
             </div>
             <div class="form-group">
                 <button type="submit">Update Product</button>
@@ -149,7 +149,7 @@
                             document.getElementById("description").value = product.description;
                             document.getElementById("image").value = product.image;
                             document.getElementById("quantity").value = product.quantity;
-                            document.getElementById("store").value = product.store; // Set store value
+                            document.getElementById("category").value = product.category; 
                             updateForm.onsubmit = (e) => {
                                 e.preventDefault();
                                 updateProduct(product.id);
@@ -167,14 +167,14 @@
                 const description = document.getElementById("description").value;
                 const image = document.getElementById("image").value;
                 const quantity = document.getElementById("quantity").value;
-                const store = document.getElementById("store").value;
+                const category = document.getElementById("category").value;
 
                 fetch(`http://127.0.0.1:5000/api/products/${productId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ name, price, description, image, quantity, store })
+                    body: JSON.stringify({ name, price, description, image, quantity, category })
                 })
                     .then(response => response.json())
                     .then(result => {

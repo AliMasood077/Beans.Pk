@@ -28,6 +28,7 @@ def get_products():
 def add_product():
     try:
         data = request.get_json()
+        print(data)  # Print the entire data object to see what is received
 
         # Retrieve fields from the request
         name = data.get('name')
@@ -35,18 +36,19 @@ def add_product():
         description = data.get('description')
         image = data.get('image')
         quantity = data.get('quantity')
-        store = data.get('store')
+        category = data.get('category')
+        ven_id = data.get('ven_id')
 
         # Check for missing fields
-        if not all([name, price, description, image, quantity, store]):
+        if not all([name, price, description, image, quantity, category, ven_id]):
             return jsonify({'error': 'Missing data fields'}), 400
 
         # Ensure database connection is managed properly
         with mysql.connector.connect(**db_config) as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "INSERT INTO products (name, price, description, image, quantity, store) VALUES (%s, %s, %s, %s, %s, %s)",
-                (name, price, description, image, quantity, store)
+                "INSERT INTO products (name, price, description, image, quantity, category, ven_id) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                (name, price, description, image, quantity, category, ven_id)
             )
             conn.commit()
 
@@ -56,6 +58,8 @@ def add_product():
         return jsonify({'error': f"Database error: {str(err)}"}), 500
     except Exception as e:
         return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
+
+
 
 @app.route('/api/products/<int:product_id>', methods=['DELETE'])
 def delete_product(product_id):
@@ -83,17 +87,17 @@ def update_product(product_id):
         description = data.get('description')
         image = data.get('image')
         quantity = data.get('quantity')
-        store = data.get('store')  # Include the store field
+        category = data.get('category')  # Include the store field
 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
         cursor.execute(
             """
             UPDATE products
-            SET name = %s, price = %s, description = %s, image = %s, quantity = %s, store = %s
+            SET name = %s, price = %s, description = %s, image = %s, quantity = %s, category = %s
             WHERE id = %s
             """,
-            (name, price, description, image, quantity, store, product_id)
+            (name, price, description, image, quantity, category, product_id)
         )
         conn.commit()
 
@@ -161,12 +165,13 @@ def vendor_signup():
         email = data.get('email')
         password = data.get('password')
         store_name = data.get('store_name')
+        store = data.get('store')
         address = data.get('address')
         phone_number = data.get('phone_number')
 
         # Check for missing fields
-        if not all([vendor_name, email, password, store_name, address]):
-            return jsonify({'error': 'All required fields (vendor name, email, password, store name, address) must be filled!'}), 400
+        if not all([vendor_name, email, password, store_name, address, store]):
+            return jsonify({'error': 'All required fields (vendor name, email, password, store name, address, store) must be filled!'}), 400
 
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
@@ -180,9 +185,9 @@ def vendor_signup():
 
         # Insert the new vendor into the database
         cursor.execute(
-            "INSERT INTO vendor (vendor_name, email, password, store_name, address, phone_number, status) "
-            "VALUES (%s, %s, %s, %s, %s, %s, 'non active')",
-            (vendor_name, email, password, store_name, address, phone_number)
+            "INSERT INTO vendor (vendor_name, email, password, store_name, address, phone_number, status ,store) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s, 'non active')",
+            (vendor_name, email, password, store_name, address, phone_number, store)
         )
         conn.commit()
 
@@ -198,18 +203,14 @@ def vendor_signup():
         logging.error(f"An error occurred: {e}")  # type: ignore
         return jsonify({'error': 'Error during vendor signup. Please try again.'}), 500
 
-if __name__ == '__main__':
-    app.run(debug=True)
 
-
-
-
+@app.route('/api/login', methods=['POST'])
 def login():
     try:
         data = request.get_json()
         email = data.get('email')
         password = data.get('password')
-
+        print(email,password)
         if not email or not password:
             return jsonify({'error': 'Email and password are required'}), 400
 
@@ -247,7 +248,7 @@ def login_vendor():
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM vendor WHERE email = %s", (email,))
-        user = cursor.fetchone()
+        vendor = cursor.fetchone()
 
         if vendor and vendor['password'] == password:
             return jsonify({'message': 'Login successful!', 'vendor': {'vendor_name': vendor['vendor_name'], 'vendor_id': vendor['vendor_id']}}), 200
@@ -477,11 +478,6 @@ def add_to_cart():
         return jsonify({'error': str(e)}), 500
 
 
-
-
-
-
-
 @app.route('/api/update_user/<int:user_id>', methods=['PUT'])
 def update_user(user_id):
     conn = None
@@ -554,6 +550,33 @@ def update_user(user_id):
             cursor.close()
         if conn:
             conn.close()
+
+@app.route('/api/products_by_vendor/<int:ven_id>', methods=['GET'])
+def products_by_vendor(ven_id):
+    try:
+        # Connect to the database
+        conn = mysql.connector.connect(**db_config)
+        cursor = conn.cursor(dictionary=True)
+
+        # Fetch products for the specific vendor
+        cursor.execute("SELECT * FROM products WHERE ven_id = %s", (ven_id,))
+        products = cursor.fetchall()
+
+        # Log fetched products
+        print(f"Products fetched for vendor ID {ven_id}: {products}")
+
+        cursor.close()
+        conn.close()
+
+        # Check if no products were found and return an appropriate response
+        if not products:
+            return jsonify({'message': 'No products found for this vendor'}), 404
+
+        return jsonify(products)
+    except mysql.connector.Error as err:
+        return jsonify({'error': f"Database error: {str(err)}"}), 500
+    except Exception as e:
+        return jsonify({'error': f"Unexpected error: {str(e)}"}), 500
 
 
 

@@ -107,8 +107,8 @@
                 <input type="number" id="quantity" name="quantity" required>
             </div>
             <div class="form-group">
-                <label for="store">Store</label>
-                <input type="text" id="store" name="store" required>
+                <label for="category">Category</label>
+                <input type="text" id="category" name="category" required>
             </div>
             <div class="form-group">
                 <button type="submit">Add Product</button>
@@ -118,6 +118,9 @@
     </div>
 
     <script>
+        // Initialize v_id from local storage
+        let v_id = parseInt(localStorage.getItem('v_id')) || 0;
+
         document.getElementById('add-product-form').addEventListener('submit', function (event) {
             event.preventDefault();
 
@@ -126,7 +129,8 @@
             const description = document.getElementById('description').value;
             const image = document.getElementById('image').value;
             const quantity = parseInt(document.getElementById('quantity').value);
-            const store = document.getElementById('store').value; // Changed to text
+            const category = document.getElementById('category').value;
+            const ven_id = v_id.toString();  // Convert to string
 
             const productData = {
                 name: name,
@@ -134,10 +138,12 @@
                 description: description,
                 image: image,
                 quantity: quantity,
-                store: store
+                category: category,
+                ven_id: v_id // Pass the vendor ID here
             };
+            console.log(v_id); // Log v_id to see its value
 
-            fetch('http://127.0.0.1:5000/api/products', {
+            fetch('http://127.0.0.1:5000/api/add/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -150,6 +156,9 @@
                     document.getElementById('message').textContent = data.message;
                     document.getElementById('message').className = 'message success';
                     document.getElementById('add-product-form').reset();
+                } else if (data.error) {
+                    document.getElementById('message').textContent = data.error;
+                    document.getElementById('message').className = 'message error';
                 } else {
                     document.getElementById('message').textContent = 'Error adding product. Please try again.';
                     document.getElementById('message').className = 'message error';
@@ -162,6 +171,7 @@
             });
         });
     </script>
+    
 </body>
 
 </html>
