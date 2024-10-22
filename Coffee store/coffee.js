@@ -100,6 +100,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 products.forEach(product => {
                     const itemDiv = document.createElement('div');
                     itemDiv.classList.add('item-1');
+    
+                    // Determine the color of the status indicator
+                    const statusColor = product.status === 'active' ? 'green' : 'gray';
+    
                     itemDiv.innerHTML = `
                         <img src="${product.image}" alt="">
                         <p class="price">$${parseFloat(product.price).toFixed(2)}</p>
@@ -108,11 +112,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         <p class="id">Product ID: ${product.id}</p>
                         <p class="id">Quantity: ${product.quantity}</p>
                         <p class="id">Category: ${product.category}</p>
+                        <p class="store">Store: ${product.store_name}</p>
+                        <p></p>
+                        <div class="status-container">
+                            <span>Status: </span>
+                            <span class="status-indicator" style="background-color: ${statusColor}; width: 10px; height: 10px; display: inline-block; border-radius: 50%;"></span>
+                            <span>${product.status}</span>
+                        </div>
                         <button class="item-btn" data-product-id="${product.id}">Add to cart</button>
                     `;
                     itemContainer.appendChild(itemDiv);
                 });
-
+    
                 // Add event listeners to dynamically added buttons
                 document.querySelectorAll(".item-btn").forEach(button => {
                     button.addEventListener("click", function() {
@@ -120,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         const productId = button.getAttribute('data-product-id');
                         const productName = item.querySelector(".Name").textContent;
                         const productPrice = parseFloat(item.querySelector(".price").textContent.replace('$', ''));
-
+    
                         addToCart(productId, productName, productPrice);
                     });
                 });
@@ -129,6 +140,7 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error('Element #product-container not found');
     }
+    
 
     // Initialize cart total display
     updateCartTotal();
