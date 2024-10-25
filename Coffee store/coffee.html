@@ -213,7 +213,23 @@
     </div>
 </footer>
 <div id="notification" class="notification"></div>
+
+<!-- Chatbot Widget -->
+<div id="chatbot-head" onclick="toggleChatbot()">💬 Chat with us</div>
+<div id="chatbot-container">
+    <div id="chatbot-header">
+        <span>Chatbot</span>
+        <button onclick="toggleChatbot()">✖</button>
+    </div>
+    <div id="chatbox"></div>
+    <input type="text" id="userInput" placeholder="Type your message here">
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+
+
 <script src="coffee.js"></script>
+
 </body>
 
 

@@ -50,6 +50,55 @@ function toggleDropdown() {
     const dropdown = document.getElementById("dropdown-menu");
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
 }
+// Function to toggle chatbot visibility
+function toggleChatbot() {
+    const chatbotContainer = document.getElementById("chatbot-container");
+    chatbotContainer.style.display = chatbotContainer.style.display === "none" ? "flex" : "none";
+}
+
+// Function to handle message sending
+async function sendMessage() {
+    const userInput = document.getElementById("userInput").value;
+    if (!userInput) return;
+
+    const chatbox = document.getElementById("chatbox");
+
+    // Display user's message
+    const userMessage = document.createElement("div");
+    userMessage.textContent = userInput;
+    userMessage.className = "message user-message";
+    chatbox.appendChild(userMessage);
+
+    // Call backend chatbot API
+    try {
+        const response = await fetch("http://127.0.0.1:5000/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: userInput }),
+        });
+        
+        const data = await response.json();
+        const botReply = data.reply || "Sorry, I couldn't understand that.";
+
+        // Display bot's reply
+        const botMessage = document.createElement("div");
+        botMessage.textContent = botReply;
+        botMessage.className = "message bot-message";
+        chatbox.appendChild(botMessage);
+
+        // Clear input and scroll down
+        document.getElementById("userInput").value = "";
+        chatbox.scrollTop = chatbox.scrollHeight;
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+}
+
+// Initialize chatbot container display as hidden
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("chatbot-container").style.display = "none";
+});
 
 document.addEventListener("DOMContentLoaded", function () {
     // Profile dropdown handling
