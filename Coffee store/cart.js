@@ -112,23 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
-    function applyDiscount() {
-        let discountCode = discountCodeInput.value.trim();
-        let discount = 0;
-
-        // Example discount logic; replace with your own
-        if (discountCode === "DISCOUNT10") {
-            discount = 0.10;
-        } else if (discountCode === "DISCOUNT20") {
-            discount = 0.20;
-        }
-
-        let totalAmount = parseFloat(totalAmountSpan.textContent);
-        let discountedAmount = totalAmount * (1 - discount);
-        totalAmountSpan.textContent = discountedAmount.toFixed(2);
-    }
-
-    applyDiscountButton.addEventListener("click", applyDiscount);
+    
 
     fetchCartItems();
 });

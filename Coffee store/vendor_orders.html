@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Orders & Vendor Status</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        .order-tracking, .vendor-management {
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .order-tracking table, .vendor-management table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #5cb85c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #4cae4c;
+        }
+        .no-orders {
+            text-align: center;
+            font-size: 18px;
+            color: #999;
+        }
+        .status-update {
+            padding: 5px 10px;
+            background-color: #ffc107;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .status-update:hover {
+            background-color: #e0a800;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Track Your Orders & Manage Vendor Status</h1>
+
+    <!-- Main Container -->
+    <div class="container">
+        
+
+        <!-- Vendor Order Management -->
+        <div class="vendor-management">
+            <h2>Vendor Order Management</h2>
+            <div id="vendor-orders-container" class="no-orders">Loading vendor orders...</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const vendorId = parseInt(localStorage.getItem('v_id')); // Logged-in vendor's ID (vendor)
+
+            const ordersContainer = document.getElementById('orders-container');
+            const vendorOrdersContainer = document.getElementById('vendor-orders-container');
+        
+
+            // Fetch vendor orders (orders associated with this vendor)
+            fetch(`http://127.0.0.1:5000/api/vendor_orders/${vendorId}`)
+                .then(response => response.json())
+                .then(vendorOrders => {
+                    if (vendorOrders.length === 0) {
+                        vendorOrdersContainer.innerHTML = 'No orders for your store yet.';
+                    } else {
+                        vendorOrdersContainer.innerHTML = ''; // Clear loading message
+                        vendorOrders.forEach(order => {
+                            const vendorOrderElement = document.createElement('div');
+                            vendorOrderElement.classList.add('order-container');
+                            vendorOrderElement.innerHTML = `
+                                <h3>Order ID: ${order.order_id}</h3>
+                                <p><strong>Store Name:</strong> ${order.store_name}</p>
+                                <p><strong>Status:</strong> ${order.status}</p>
+                                <p><strong>Total Amount:</strong> $${order.total_amount}</p>
+                                <button class="status-update" onclick="updateStatus(${order.order_id})">Update Status</button>
+                            `;
+                            vendorOrdersContainer.appendChild(vendorOrderElement);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching vendor orders:', error);
+                    vendorOrdersContainer.innerHTML = `<p>Failed to load vendor orders. Please try again later.</p>`;
+                });
+        });
+
+        // Function to update the order status
+        function updateStatus(orderId) {
+            const newStatus = prompt("Enter new order status (e.g., Shipped, Delivered):");
+            if (newStatus) {
+                fetch(`http://127.0.0.1:5000/api/orders/update/${orderId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: newStatus })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('Order status updated successfully!');
+                    location.reload();  // Reload to reflect the changes
+                })
+                .catch(error => {
+                    console.error('Error updating order status:', error);
+                    alert('Failed to update order status.');
+                });
+            }
+        }
+    </script>
+
+</body>
+</html>

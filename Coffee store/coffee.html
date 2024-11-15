@@ -59,28 +59,18 @@
                 <a href="trainers.html">About us</a>
                 <a href="contact_us.html">Contact us</a>
                 <a href="admin.html">Admin Panel</a>
+                <a href="user_orders.html">orders </a>
             </div>
-            <div class="store">
-                <span class="store-icon">
+            <div class="category">
+                <span class="category-icon">
                     <i class="fa-solid fa-store"></i>
                 </span>
-                <h4 id="store-title">
-                    Select Store
+                <h4 id="category-title">
+                    Select category
                     <i class="fa-solid fa-caret-down"></i>
                 </h4>
-                <div class="store-dropdown" id="store-dropdown">
-                    <ul>
-                        <li>Karachi</li>
-                        <li>Lahore</li>
-                        <li>Islamabad</li>
-                        <li>Rawalpindi</li>
-                        <li>Faisalabad</li>
-                        <li>Multan</li>
-                        <li>Peshawar</li>
-                        <li>Quetta</li>
-                        <li>Gilgit</li>
-                        <li>Skardu</li>
-                    </ul>
+                <div class="category-dropdown" id="category-dropdown">
+                    <ul id="category-list"></ul>
                 </div>
             </div>
             <div class="profile-container">
@@ -116,6 +106,27 @@
         <div class="item-container" id="product-container">
             <!-- Product items will be dynamically added here -->
         </div>
+        <!-- Modal structure -->
+<div id="product-modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <div class="modal-body">
+            <div class="modal-left">
+                <img id="modal-image" src="" alt="Product Image">
+            </div>
+            <div class="modal-right">
+                <p><strong>Name:</strong> <span id="modal-name"></span></p>
+                <p><strong>Description:</strong> <span id="modal-description"></span></p>
+                <p><strong>Price:</strong> $<span id="modal-price"></span></p>
+                <p><strong>Quantity:</strong> <span id="modal-quantity"></span></p>
+                <p><strong>Category:</strong> <span id="modal-category"></span></p>
+                <p><strong>Store:</strong> <span id="modal-store"></span></p>
+                <button id="add-to-cart-btn" data-product-id="">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
        <!-- Why Bazaar Section -->
        <div class="why-bazaar-container">

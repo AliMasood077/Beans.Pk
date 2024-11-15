@@ -77,3 +77,87 @@ button:hover {
 #total-amount {
     margin-top: 20px;
 }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    /* Header */
+    .header-container {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.5em; /* Adjust the font size for smaller screens */
+    }
+
+    /* Checkout step */
+    .checkout-step {
+        padding: 15px;
+        margin: 15px;
+    }
+
+    label {
+        font-size: 14px; /* Slightly smaller labels on mobile */
+    }
+
+    input[type="text"], select {
+        font-size: 14px; /* Adjust input font size */
+        padding: 12px; /* Increase padding for easier input */
+    }
+
+    button {
+        width: 100%; /* Make buttons full width on smaller screens */
+        padding: 12px;
+        font-size: 16px; /* Adjust button font size */
+    }
+
+    /* Cart table */
+    .cart-table {
+        font-size: 14px; /* Smaller font size for mobile */
+    }
+
+    .cart-table th, .cart-table td {
+        padding: 10px;
+    }
+
+    /* Cart item image */
+    .cart-item-image {
+        width: 40px; /* Adjust image size for smaller screens */
+    }
+
+    /* Total amount section */
+    #total-amount {
+        font-size: 16px; /* Adjust font size for better readability */
+    }
+}
+
+/* Very small screens (mobile portrait or smaller) */
+@media (max-width: 480px) {
+    body {
+        font-size: 13px; /* Reduce font size further for very small screens */
+    }
+
+    .header-container {
+        padding: 10px;
+    }
+
+    .cart-table {
+        font-size: 12px; /* Reduce font size further for readability */
+    }
+
+    .cart-item-row {
+        height: auto; /* Allow row height to adjust based on content */
+    }
+
+    .cart-item-image {
+        width: 35px; /* Make image smaller */
+    }
+
+    .checkout-step {
+        padding: 10px;
+        margin: 10px;
+    }
+
+    button {
+        font-size: 14px; /* Adjust button font size for smaller screens */
+    }
+}

@@ -1,6 +1,109 @@
 let userid;
 let u_name = "";
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
+let categories;
+
+async function fetchCategoryNames() {
+    try {
+        // Show loading indicator
+        const categoryList = document.getElementById('category-list');
+        categoryList.innerHTML = '<li>Loading categories...</li>';
+
+        // Fetch categories from the API
+        const response = await fetch('http://127.0.0.1:5000/category');
+        categories = await response.json();
+
+        // Clear loading message
+        categoryList.innerHTML = '';
+
+        // Check if categories are empty
+        if (categories.length === 0) {
+            categoryList.innerHTML = '<li>No categories available</li>';
+            return;
+        }
+
+        // Add categories to the dropdown list
+        categories.forEach(category => {
+            const li = document.createElement('li');
+            li.textContent = category.name || category; // Adjust based on response structure
+            li.addEventListener('click', () => fetchFilteredData(category.name || category)); // Use category name or category directly
+            categoryList.appendChild(li);
+        });
+    } catch (error) {
+        console.error('Error fetching category names:', error);
+        const categoryList = document.getElementById('category-list');
+        categoryList.innerHTML = '<li>Error loading categories</li>';
+    }
+}
+
+async function fetchFilteredData(categoryName) {
+    const itemContainer = document.getElementById('product-container'); // Assuming the container has this ID
+    if (itemContainer) {
+        try {
+            // Clear previous products before fetching new ones
+            itemContainer.innerHTML = '';
+
+            // Fetch products from the API with category filter
+            const response = await fetch(`http://127.0.0.1:5000/api/products?category=${categoryName}`);
+            const products = await response.json();
+
+            if (products.length === 0) {
+                itemContainer.innerHTML = '<p>No products available in this category.</p>';
+                return;
+            }
+
+            // Add filtered products to the container
+            products.forEach(product => {
+                const itemDiv = document.createElement('div');
+                itemDiv.classList.add('item-1');
+
+                // Determine the color of the status indicator
+                const statusColor = product.status === 'active' ? 'green' : 'gray';
+
+                itemDiv.innerHTML = `
+                    <img src="${product.image}" alt="">
+                    <p class="price">$${parseFloat(product.price).toFixed(2)}</p>
+                    <p class="Name">${product.name}</p>
+                    <p class="taste">${product.description}</p>
+                    <p class="id">Product ID: ${product.id}</p>
+                    <p class="id">Quantity: ${product.quantity}</p>
+                    <p class="id">Category: ${product.category}</p>
+                    <p class="store">Store: ${product.store_name}</p>
+                    <p></p>
+                    <div class="status-container">
+                        <span>Status: </span>
+                        <span class="status-indicator" style="background-color: ${statusColor}; width: 10px; height: 10px; display: inline-block; border-radius: 50%;"></span>
+                        <span>${product.status}</span>
+                    </div>
+                    <button class="item-btn" data-product-id="${product.id}">Add to cart</button>
+                `;
+                itemContainer.appendChild(itemDiv);
+            });
+
+            // Add event listeners to dynamically added buttons
+            document.querySelectorAll(".item-btn").forEach(button => {
+                button.addEventListener("click", function() {
+                    const item = button.closest(".item-1");
+                    const productId = button.getAttribute('data-product-id');
+                    const productName = item.querySelector(".Name").textContent;
+                    const productPrice = parseFloat(item.querySelector(".price").textContent.replace('$', ''));
+
+                    addToCart(productId, productName, productPrice);
+                });
+            });
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    } else {
+        console.error('Element #product-container not found');
+    }
+}
+
+// Initialize category list when page loads
+document.addEventListener('DOMContentLoaded', () => {
+    fetchCategoryNames();
+});
+
 
 // Function to add an item to the cart
 function addToCart(productId) {
@@ -94,6 +197,7 @@ async function sendMessage() {
         console.error("Error:", error);
     }
 }
+
 
 // Initialize chatbot container display as hidden
 document.addEventListener("DOMContentLoaded", () => {
@@ -223,18 +327,99 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateOffer();
 
-    // Store dropdown functionality
-    const storeDropdown = document.getElementById("store-dropdown");
-    const storeTitle = document.getElementById("store-title");
+    // Category dropdown functionality
+const categoryDropdown = document.getElementById("category-dropdown");
+const categoryTitle = document.getElementById("category-title"); 
 
-    storeTitle.addEventListener("click", function () {
-        storeDropdown.style.display = (storeDropdown.style.display === "block") ? "none" : "block";
-    });
+// Toggle the display of the category dropdown when clicking on the title
+categoryTitle.addEventListener("click", function () {
+    categoryDropdown.style.display = (categoryDropdown.style.display === "block") ? "none" : "block";
+});
 
-    // Close store dropdown when clicking outside
-    document.addEventListener("click", function (event) {
-        if (!storeTitle.contains(event.target) && !storeDropdown.contains(event.target)) {
-            storeDropdown.style.display = "none";
+// Close category dropdown when clicking outside
+document.addEventListener("click", function (event) {
+    if (!categoryTitle.contains(event.target) && !categoryDropdown.contains(event.target)) {
+        categoryDropdown.style.display = "none";
+    }
+});
+
+
+
+
+
+// Function to handle image click and show modal
+document.addEventListener('click', function(event) {
+    if (event.target && event.target.tagName === 'IMG' && event.target.closest('.item-1')) {
+        const productDiv = event.target.closest('.item-1');
+        const productId = productDiv.querySelector('.item-btn').getAttribute('data-product-id');
+        const productName = productDiv.querySelector('.Name').textContent;
+        const productPrice = parseFloat(productDiv.querySelector('.price').textContent.replace('$', ''));
+        const productDescription = productDiv.querySelector('.taste').textContent;
+        const productCategory = productDiv.querySelector('.id').textContent.split(': ')[1]; // Assuming category follows 'ID' text
+        const productStore = productDiv.querySelector('.store').textContent.split(': ')[1]; // Assuming store follows 'Store' text
+        const productImage = productDiv.querySelector('img').src;
+
+        // Set modal content
+        document.getElementById('modal-image').src = productImage;
+        document.getElementById('modal-name').textContent = productName;
+        document.getElementById('modal-price').textContent = productPrice.toFixed(2);
+        document.getElementById('modal-description').textContent = productDescription;
+        document.getElementById('modal-category').textContent = productCategory;
+        document.getElementById('modal-store').textContent = productStore;
+
+        // Store the product ID in the "Add to Cart" button
+        const addToCartBtn = document.getElementById('add-to-cart-btn');
+        addToCartBtn.setAttribute('data-product-id', productId);
+
+        // Display the modal
+        document.getElementById('product-modal').style.display = 'block';
+    }
+});
+
+// Function to close the modal when the close button is clicked
+document.querySelector('.close').addEventListener('click', function() {
+    document.getElementById('product-modal').style.display = 'none';
+});
+
+// Function to add product to cart from modal
+document.getElementById('add-to-cart-btn').addEventListener('click', function() {
+    const productId = this.getAttribute('data-product-id');
+    addToCart(productId);
+    document.getElementById('product-modal').style.display = 'none';
+});
+
+// Function to add item to the cart (same as your existing `addToCart` function)
+function addToCart(productId) {
+    const data = {
+        user_id: userid,
+        product_id: productId
+    };
+
+    fetch('http://127.0.0.1:5000/api/add_to_cart', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            console.error('Error:', data.error);
+            showErrorNotification(data.error); // Display error notification
+        } else {
+            console.log('Success:', data.message);
+            // showNotification('Product added to cart'); // Display success notification
         }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // showErrorNotification('Failed to add product to cart'); // Display error notification
     });
+}
+
+
+
+
+
 });

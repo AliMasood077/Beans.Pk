@@ -13,8 +13,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectFromCartRadio = document.getElementById('selectFromCart');
     const cartItemsContainer = document.getElementById('cart-items-container');
     const totalAmountSpan = document.getElementById('total-price');
+    
+    const discountCodeInput = document.getElementById('discountCode');
+    const applyDiscountButton = document.getElementById('apply-discount');
 
     let cartItems = []; // Empty initially, will be populated with data from API
+    let discounts = []; // Empty initially, will store discounts fetched from API
 
     // Fetch cart data from API
     async function fetchCartItems() {
@@ -23,12 +27,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const response = await fetch(`http://127.0.0.1:5000/api/cart/${userId}`);
             if (response.ok) {
                 const data = await response.json();
-                console.log('API Response:', data); // Log the response
-
-                // Directly assign the cart items since they are returned as an array
-                cartItems = data; // Assuming 'data' is the array of cart items
-
-                console.log('Cart items fetched:', cartItems); // Log the cart items
+                cartItems = data;
             } else {
                 console.error('Failed to fetch cart items:', response.status);
             }
@@ -37,10 +36,25 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Ensure cart data is fetched before any display actions
-    async function loadCartItems() {
-        await fetchCartItems(); // Wait for the cart items to be fetched
-        displayCartItems(cartItems); // Then display the fetched items
+    // Fetch discounts from API
+    async function fetchDiscounts() {
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/discounts/live');
+            if (response.ok) {
+                discounts = await response.json();
+            } else {
+                console.error('Failed to fetch discounts:', response.status);
+            }
+        } catch (error) {
+            console.error('Error fetching discounts:', error);
+        }
+    }
+
+    // Ensure cart and discount data are fetched before any display actions
+    async function loadCartAndDiscounts() {
+        await fetchCartItems();
+        await fetchDiscounts();
+        displayCartItems(cartItems);
     }
 
     // Go to Step 2
@@ -59,44 +73,97 @@ document.addEventListener('DOMContentLoaded', function () {
     nextToStep3Button.addEventListener('click', function () {
         step2.style.display = 'none';
         step3.style.display = 'block';
-        confirmOrderButton.style.display = 'none'; // Initially hide the Confirm Order button
+        confirmOrderButton.style.display = 'none';
     });
 
     // Show table and calculate total for "All Cart" option
     allCartRadio.addEventListener('change', function () {
-        loadCartItems(); // Load cart items when "All Cart" is selected
+        loadCartAndDiscounts();
         cartItemsContainer.style.display = 'block';
         confirmOrderButton.style.display = 'block';
     });
 
-    // Show table for "Select from Cart" option and allow selection
+    // Show table for "Select from Cart" option
     selectFromCartRadio.addEventListener('change', function () {
-        loadCartItems(); // Load cart items when "Select from Cart" is selected
+        loadCartAndDiscounts();
         cartItemsContainer.style.display = 'block';
         confirmOrderButton.style.display = 'block';
     });
 
     // Confirm Order action
-    confirmOrderButton.addEventListener('click', function () {
-        alert('Order confirmed! Thank you for shopping.');
+    confirmOrderButton.addEventListener('click', async function () {
+        const userId = parseInt(localStorage.getItem('userid'));
+        const discountCode = discountCodeInput.value.trim();
+        const cartItemsToSubmit = [];
+    
+        // Gather selected items
+        const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+        checkboxes.forEach(checkbox => {
+            const price = parseFloat(checkbox.getAttribute('data-price'));
+            const quantity = parseInt(checkbox.getAttribute('data-quantity'));
+            const productId = parseInt(checkbox.closest('tr').getAttribute('data-product-id')); // Get product_id from row attribute
+    
+            // Check if product_id is valid
+            if (isNaN(productId)) {
+                alert("Product ID is missing for one of the items.");
+                return;  // Exit if product_id is missing
+            }
+    
+            // Add the product to the cartItemsToSubmit array
+            cartItemsToSubmit.push({ product_id: productId, quantity, price });
+        });
+    
+        if (cartItemsToSubmit.length === 0) {
+            alert("No items selected.");
+            return; // Prevent submission if no items are selected
+        }
+    
+        // Prepare data for order submission
+        const orderData = {
+            user_id: userId,
+            discount_code: discountCode,
+            cart_items: cartItemsToSubmit
+        };
+    
+        // Send data to the backend API
+        try {
+            const response = await fetch('http://127.0.0.1:5000/api/checkout', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            });
+    
+            if (response.ok) {
+                const result = await response.json();
+                alert(`Order confirmed! Your order ID is: ${result.order_id}`);
+            } else {
+                const error = await response.json();
+                alert(`Failed to confirm order: ${error.message || 'Unknown error'}`);
+            }
+        } catch (error) {
+            console.error('Error during checkout:', error);
+            alert('An error occurred while processing your order. Please try again.');
+        }
     });
+    
 
-    // Function to display cart items in a table format
+    // Display cart items in a table
     function displayCartItems(cartItems) {
-        cartItemsContainer.innerHTML = ""; // Clear previous content
-
+        cartItemsContainer.innerHTML = "";
         if (cartItems.length === 0) {
             cartItemsContainer.innerHTML = "<p>Your cart is empty.</p>";
             return;
         }
-
+    
         const table = document.createElement("table");
         table.classList.add("cart-table");
-
+    
         // Table header
         const headerRow = document.createElement("tr");
         headerRow.innerHTML = `
-            <th>Select</th> <!-- Add checkbox column -->
+            <th>Select</th>
             <th>Image</th>
             <th>Name</th>
             <th>Price</th>
@@ -104,56 +171,77 @@ document.addEventListener('DOMContentLoaded', function () {
             <th>Total</th>
         `;
         table.appendChild(headerRow);
-
+    
         let totalAmount = 0;
-
+    
         // Loop through cart items and create rows
         cartItems.forEach(item => {
             const row = document.createElement("tr");
-            row.classList.add("cart-item-row");
-
-            const itemTotal = parseFloat(item.price) * (item.quantity || 1); // Multiply price by quantity, default quantity to 1 if not provided
-
+            const itemTotal = parseFloat(item.price) * (item.quantity || 1);
+    
+            // Add data-product-id attribute to each row
+            row.setAttribute('data-product-id', item.product_id); // Ensure the product_id is stored here
+    
             row.innerHTML = `
-                <td><input type="checkbox" class="item-checkbox" data-price="${item.price}" data-quantity="${item.quantity || 1}" checked></td> <!-- Checkbox for selection -->
+                <td><input type="checkbox" class="item-checkbox" data-price="${item.price}" data-quantity="${item.quantity || 1}" checked></td>
                 <td><img src="${item.image}" alt="${item.name}" class="cart-item-image"></td>
                 <td>${item.name}</td>
                 <td>$${parseFloat(item.price).toFixed(2)}</td>
                 <td>${item.quantity || 1}</td>
                 <td>$${itemTotal.toFixed(2)}</td>
             `;
-
+    
             table.appendChild(row);
-
-            totalAmount += itemTotal; // Accumulate total price
+            totalAmount += itemTotal;
         });
-
-        // Append the table to the container
+    
         cartItemsContainer.appendChild(table);
-
-        // Update the total price display
         totalAmountSpan.textContent = totalAmount.toFixed(2);
-
-        cartItemsContainer.style.display = 'block'; // Ensure the container is visible
-
-        // Update total amount based on selected items
+    
         const checkboxes = document.querySelectorAll('.item-checkbox');
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', updateTotal);
-        });
+        checkboxes.forEach(checkbox => checkbox.addEventListener('change', updateTotal));
     }
+    
 
-    // Function to update the total amount based on selected items
+    // Update total amount based on selected items
     function updateTotal() {
         let totalAmount = 0;
-        const checkboxes = document.querySelectorAll('.item-checkbox:checked'); // Get checked checkboxes
-
+        const checkboxes = document.querySelectorAll('.item-checkbox:checked');
         checkboxes.forEach(checkbox => {
             const price = parseFloat(checkbox.getAttribute('data-price'));
             const quantity = parseInt(checkbox.getAttribute('data-quantity'));
-            totalAmount += price * quantity; // Calculate total for selected items
+            totalAmount += price * quantity;
         });
-
-        totalAmountSpan.textContent = totalAmount.toFixed(2); // Update total display
+        totalAmountSpan.textContent = totalAmount.toFixed(2);
     }
+
+    // Apply discount to total amount
+    function applyDiscount() {
+        const discountCode = discountCodeInput.value.trim();
+        const discount = discounts.find(d => d.code === discountCode);
+    
+        if (discount) {
+            const discountPercentage = parseFloat(discount.percentage) / 100;
+    
+            // Recalculate the total based on selected items
+            let totalAmount = 0;
+            const checkboxes = document.querySelectorAll('.item-checkbox:checked');
+            checkboxes.forEach(checkbox => {
+                const price = parseFloat(checkbox.getAttribute('data-price'));
+                const quantity = parseInt(checkbox.getAttribute('data-quantity'));
+                totalAmount += price * quantity;
+            });
+    
+            // Apply the discount to the recalculated total
+            const discountedAmount = totalAmount * (1 - discountPercentage);
+            totalAmountSpan.textContent = discountedAmount.toFixed(2);
+    
+            alert(`Discount applied: ${discount.percentage}% off!`);
+        } else {
+            alert("Invalid discount code. Please try again.");
+        }
+    }
+    
+
+    applyDiscountButton.addEventListener("click", applyDiscount);
 });

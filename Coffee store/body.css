@@ -168,26 +168,7 @@ h1 {
     padding: 20px;
 }
 
-/* .blog-container img {
-    background-color: pink;
-    height: 270px;
-    border-radius: 10px;
-}
-
-.post-1 {
-    padding-top: 150px;
-    padding-left: 40px;
-}
-
-.post-1 p {
-    font-size: 14px;
-    color: #F1EBE4;
-    font-family: sans-serif;
-    margin-top: 20px;
-} */
-
 .footer-container {
-    /* height: 500px; */
     background-color: rgb(50, 51, 46);
 }
 
@@ -246,41 +227,26 @@ h1 {
     font-size: 30px;
     padding-left: 20px;
 }
-.navigate a:hover{
-    text-decoration: underline;
-}
-.footer-2-container{
+
+.footer-2-container {
     height: 90px;
-    background-color:  rgb(50, 51, 46);
+    background-color: rgb(50, 51, 46);
     display: flex;
     justify-content: center;
     align-items: center;
 }
-.footer-2{
+
+.footer-2 {
     text-align: center;
     font-size: 18px;
     color: #f1ebe4;
     font-family: sans-serif;
-
 }
 
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .footer-1 {
-        flex-direction: column; /* Stack columns on smaller screens */
-        align-items: center;
-        text-align: center;
-    }
-
-    .footer-1 ul {
-        margin-bottom: 30px; /* Space between footer sections */
-    }
-
-    .payment-methods img {
-        margin-bottom: 10px;
-    }
+.navigate a:hover {
+    text-decoration: underline;
 }
+
 .profile-container {
     position: relative;
     display: inline-block;
@@ -323,7 +289,191 @@ h1 {
     background-color: #f1f1f1;
 }
 
-/* Show dropdown when hovering over the profile picture */
 .profile-container:hover .dropdown {
-    display: block;
+    display: block;
+}
+
+/* Modal Background */
+.modal {
+    display: none; 
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto;
+    padding-top: 60px;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
+
+/* Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Product image in the modal */
+.product-detail-image {
+    width: 100%;
+    max-width: 500px;  /* Adjust as per your design */
+    display: block;
+    margin: 0 auto;
+}
+
+/* Product container */
+.item-1 {
+    border: 1px solid #ddd;
+    margin: 10px;
+    padding: 10px;
+    display: inline-block;
+    width: calc(25% - 20px);
+    box-sizing: border-box;
+}
+
+.item-1 img {
+    width: 100%;
+    height: auto;
+}
+
+.item-1 .price {
+    font-size: 1.2em;
+    color: #e91e63;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    /* Item container and item styling */
+    .item-container {
+        justify-content: center; /* Center items on smaller screens */
+    }
+
+    .item-1 {
+        width: 100%; /* Make item containers take full width */
+        margin: 10px 0;
+        height: auto;
+    }
+
+    .item-btn {
+        width: 100%;
+    }
+
+    /* Footer Styling */
+    .footer-1 {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-1 ul {
+        margin-bottom: 30px;
+    }
+
+    /* Profile Section */
+    .profile-container {
+        text-align: center;
+    }
+
+    /* Modal Content */
+    .modal-content {
+        width: 90%;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 20px;
+    }
+
+    .item-1 {
+        width: 100%;
+    }
+
+    .footer-1 {
+        font-size: 0.75rem;
+    }
+
+    .reason i {
+        font-size: 30px;
+    }
+
+    .reason h3 {
+        font-size: 18px;
+    }
+}
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1000; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100vw; /* Full width */
+    height: 100vh; /* Full height */
+    background-color: rgba(0, 0, 0, 0.6); /* Black w/ opacity */
+    overflow: auto; /* Enable scroll if needed */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #fff;
+    width: 90%;  /* Adjust width to fit within the screen */
+    height: 80%; /* Adjust height to fit within the screen */
+    display: flex;
+    gap: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 1200px; /* Limit max width */
+    margin: 0 auto;
+}
+
+/* Left side for the image */
+.modal-left img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensure the image covers the area */
+}
+
+/* Right side for the details */
+.modal-right {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto; /* Enable scroll if the content exceeds height */
+}
+
+/* Close Button */
+.close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
 }

@@ -1,3 +1,4 @@
+/* Reset and global styles */
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
@@ -49,11 +50,11 @@ h1 {
 }
 
 .cart-item img {
-    width: 80px; /* Adjusted size to be smaller */
-    height: auto;
-    max-width: 100px; /* Ensure it doesn't exceed a maximum width */
-    max-height: 80px; /* Ensure it doesn't exceed a maximum height */
-    object-fit: cover; /* Preserve aspect ratio and cover space */
+    width: 100%; /* Ensures the image takes up the full width of the container */
+    max-width: 80px; /* Constrains the maximum size of the image */
+    height: auto; /* Maintains aspect ratio */
+    object-fit: cover; /* Ensures the image covers the area without distortion */
+    border-radius: 8px; /* Optional: Add rounded corners */
 }
 
 .cart-item-details {
@@ -148,17 +149,73 @@ h1 {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    /* Cart items */
     .cart-item {
         flex-direction: column; /* Stack items vertically on small screens */
         align-items: flex-start;
     }
 
-    .cart-summary {
+    .cart-item img {
+        width: 100%; /* Ensures the image takes up the full width of the container */
+        max-width: 80px; /* Constrains the maximum size of the image */
+        height: auto; /* Maintains aspect ratio */
+        object-fit: cover; /* Ensures the image covers the area without distortion */
+        border-radius: 8px; /* Optional: Add rounded corners */
+    }
+    
+    .cart-item-details {
+        width: 100%; /* Allow details to fill width on small screens */
+    }
+
+    .item-price-quantity {
         flex-direction: column;
         align-items: flex-start;
     }
 
+    /* Cart Summary */
+    .cart-summary {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .cart-total {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    /* Checkout Button */
     #checkout-button {
         width: 100%;
+        padding: 12px 20px;
+    }
+}
+
+/* Very small screens (mobile landscape or smaller) */
+@media (max-width: 480px) {
+    body {
+        font-size: 14px; /* Adjust text size for small screens */
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .cart-item img {
+        width: 80px; /* Adjust image size for very small screens */
+        height: 80px; /* Keep images consistent */
+    }
+
+    .quantity-input {
+        width: 40px; /* Adjust input size for smaller screens */
+    }
+
+    .quantity-btn {
+        padding: 5px 8px;
+    }
+
+    .remove-btn, .quantity-btn {
+        padding: 5px 8px;
     }
 }

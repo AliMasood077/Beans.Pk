@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -5,32 +6,71 @@
     <meta charset="UTF-8">
     <title>Vendor Signup</title>
     <script>
+        let generatedOtp = null;
+
+        function generateAndSendOTP() {
+            const email = document.getElementById("email").value;
+
+            if (!email) {
+                document.getElementById("error-message").textContent = "Please enter a valid email address.";
+                return;
+            }
+
+            // Generate a 4-digit OTP
+            generatedOtp = Math.floor(1000 + Math.random() * 9000).toString();
+            console.log("Generated OTP:", generatedOtp); // For testing only; remove in production
+
+            // Send OTP to the server for emailing
+            fetch("http://127.0.0.1:5000/api/send_otp_email", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email: email, otp: generatedOtp }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById("error-message").textContent = "OTP sent to your email!";
+                } else {
+                    document.getElementById("error-message").textContent = "Failed to send OTP. Please try again.";
+                }
+            })
+            .catch(error => {
+                document.getElementById("error-message").textContent = "An error occurred. Please try again.";
+            });
+        }
+
         function handleSignupResponse(event) {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault();
+
+            const enteredOtp = document.getElementById("otp").value;
+            if (enteredOtp !== generatedOtp) {
+                document.getElementById("error-message").textContent = "Invalid OTP. Please try again.";
+                return;
+            }
 
             const formData = new FormData(event.target);
 
             fetch(event.target.action, {
-                method: 'POST',
+                method: "POST",
                 body: formData,
             })
             .then(response => {
                 if (response.ok) {
-                    // If the signup was successful, redirect to the login page
-                    window.location.href = 'coffee.html';
+                    window.location.href = "coffee.html";
                 } else {
-                    // If there's an error, display it on the page
                     return response.json().then(data => {
-                        document.getElementById('error-message').textContent = data.error;
+                        document.getElementById("error-message").textContent = data.error;
                     });
                 }
             })
             .catch(error => {
-                // If there's a network error, display a generic error message
-                document.getElementById('error-message').textContent = 'An error occurred. Please try again.';
+                document.getElementById("error-message").textContent = "An error occurred. Please try again.";
             });
         }
     </script>
+    
     <style>
         body, h1, h2, p, a {
             margin: 0;
@@ -152,22 +192,22 @@
     <h1>Vendor Signup Page</h1>
     <h2>Create your vendor account</h2>
 
-    <!-- Error message display area -->
     <p id="error-message" style="color: red;"></p>
 
-    <form action="http://127.0.0.1:5000/api/vendor_signup" method="post" onsubmit="handleSignupResponse(event)">
+    <form id="signup-form" action="http://127.0.0.1:5000/api/vendor_signup" method="post" onsubmit="handleSignupResponse(event)">
         <input type="text" name="vendor_name" placeholder="Vendor Name" required><br>
-        <input type="email" name="email" placeholder="Email" required><br>
+        <input type="email" name="email" id="email" placeholder="Email" required><br>
+        <button type="button" onclick="generateAndSendOTP()">Send OTP</button><br>
+        <input type="text" name="otp" id="otp" placeholder="Enter OTP" required><br>
         <input type="password" name="password" placeholder="Password" required><br>
         <input type="text" name="store_name" placeholder="Store Name" required><br>
         <input type="text" name="address" placeholder="Address" required><br>
         <input type="text" name="phone_number" placeholder="Phone number"><br>
-        <input type="text" name="city" placeholder="location" required><br>
+        <input type="text" name="city" placeholder="Location" required><br>
         <button type="submit">Signup</button>
     </form>
 
     <p><a href="login_vendor.html">Login</a></p>
-
 </body>
 
 </html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Discount</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, textarea, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Add Discount</h1>
+        <form id="discountForm">
+            <label for="code">Discount Code</label>
+            <input type="text" id="code" name="code" required>
+
+            <label for="percentage">Percentage</label>
+            <input type="number" id="percentage" name="percentage" step="0.01" min="0" max="100" required>
+
+            <label for="start_date">Start Date</label>
+            <input type="datetime-local" id="start_date" name="start_date" required>
+
+            <label for="expiry_date">Expiry Date (optional)</label>
+            <input type="datetime-local" id="expiry_date" name="expiry_date">
+
+            <label for="description">Description (optional)</label>
+            <textarea id="description" name="description" rows="3"></textarea>
+
+            <button type="submit">Add Discount</button>
+        </form>
+        <p id="responseMessage" style="text-align: center; color: green;"></p>
+    </div>
+
+    <script>
+        document.getElementById('discountForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = {
+                code: document.getElementById('code').value,
+                percentage: parseFloat(document.getElementById('percentage').value),
+                start_date: document.getElementById('start_date').value,
+                expiry_date: document.getElementById('expiry_date').value || null,
+                description: document.getElementById('description').value || null,
+            };
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/discounts', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
+                const result = await response.json();
+                const responseMessage = document.getElementById('responseMessage');
+
+                if (response.ok) {
+                    responseMessage.textContent = result.message;
+                    responseMessage.style.color = 'green';
+                    document.getElementById('discountForm').reset();
+                } else {
+                    responseMessage.textContent = result.error || 'Failed to add discount';
+                    responseMessage.style.color = 'red';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('responseMessage').textContent = 'An error occurred';
+                document.getElementById('responseMessage').style.color = 'red';
+            }
+        });
+    </script>
+</body>
+</html>
