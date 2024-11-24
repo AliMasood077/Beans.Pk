@@ -153,13 +153,40 @@ function toggleDropdown() {
     const dropdown = document.getElementById("dropdown-menu");
     dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
 }
-// Function to toggle chatbot visibility
 function toggleChatbot() {
     const chatbotContainer = document.getElementById("chatbot-container");
     chatbotContainer.style.display = chatbotContainer.style.display === "none" ? "flex" : "none";
+
+    // Load chats if opened
+    if (chatbotContainer.style.display === "flex") {
+        loadPreviousChats();
+    }
 }
 
-// Function to handle message sending
+// Load previous chats
+async function loadPreviousChats() {
+    const chatbox = document.getElementById("chatbox");
+    chatbox.innerHTML = ""; // Clear chatbox
+
+    try {
+        const response = await fetch(`http://127.0.0.1:5000/chats?user_id=${userid}`);
+        const data = await response.json();
+        const messages = data.messages || [];
+
+        messages.forEach(({ sender, message }) => {
+            const msgDiv = document.createElement("div");
+            msgDiv.textContent = message;
+            msgDiv.className = `message ${sender === "user" ? "user-message" : "bot-message"}`;
+            chatbox.appendChild(msgDiv);
+        });
+
+        chatbox.scrollTop = chatbox.scrollHeight; // Scroll to bottom
+    } catch (error) {
+        console.error("Error loading chats:", error);
+    }
+}
+
+// Send a new message
 async function sendMessage() {
     const userInput = document.getElementById("userInput").value;
     if (!userInput) return;
@@ -172,32 +199,32 @@ async function sendMessage() {
     userMessage.className = "message user-message";
     chatbox.appendChild(userMessage);
 
-    // Call backend chatbot API
     try {
-        const response = await fetch("http://127.0.0.1:5000/chat", {
+        // Send the message to the backend
+        const response = await fetch("http://127.0.0.1:5000/send_message", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: userInput }),
+            body: JSON.stringify({ user_id: userid, sender: "user", message: userInput }),
         });
-        
-        const data = await response.json();
-        const botReply = data.reply || "Sorry, I couldn't understand that.";
 
-        // Display bot's reply
+        const data = await response.json();
+        if (data.error) throw new Error(data.error);
+
+        const adminReply = data.reply || "Admin will reply shortly.";
+
+        // Display admin's reply
         const botMessage = document.createElement("div");
-        botMessage.textContent = botReply;
+        botMessage.textContent = adminReply;
         botMessage.className = "message bot-message";
         chatbox.appendChild(botMessage);
 
         // Clear input and scroll down
         document.getElementById("userInput").value = "";
         chatbox.scrollTop = chatbox.scrollHeight;
-
     } catch (error) {
-        console.error("Error:", error);
+        console.error("Error sending message:", error);
     }
 }
-
 
 // Initialize chatbot container display as hidden
 document.addEventListener("DOMContentLoaded", () => {
