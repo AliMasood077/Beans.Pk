@@ -89,7 +89,7 @@
             <!-- Dynamic list of chat items will appear here -->
         </div>
         <div class="chat-box" id="chatBox" style="display: none;">
-            <h3>Chat with User: <span id="chatUser"></span></h3>
+            <h3>Chat with: <span id="chatUser"></span></h3>
             <div class="messages" id="messages">
                 <!-- Messages will appear here -->
             </div>
@@ -113,10 +113,10 @@
                 const chatList = document.getElementById("chatList");
 
                 if (data.messages && data.messages.length > 0) {
-                    data.messages.forEach((chat, index) => {
+                    data.messages.forEach((chat) => {
                         const chatItem = document.createElement("div");
                         chatItem.className = "chat-item";
-                        chatItem.textContent = `Chat ${chat.chat_id}`;
+                        chatItem.textContent = chat.user_name || `User ${chat.user_id}`;
                         chatItem.onclick = () => loadChatMessages(chat);
                         chatList.appendChild(chatItem);
                     });
@@ -128,62 +128,61 @@
             }
         };
 
+        // Load messages for a specific chat
         async function loadChatMessages(chat) {
-    currentChatId = chat.chat_id;
-    currentChat = chat; // Store the chat data for later use
-    document.getElementById("chatUser").textContent = `User ${chat.user_id}`;
+            currentChatId = chat.chat_id;
 
-    const messagesContainer = document.getElementById("messages");
-    messagesContainer.innerHTML = "";
+            // Display the user's name
+            document.getElementById("chatUser").textContent = chat.user_name || `User ${chat.user_id}`;
 
-    chat.messages.forEach(msg => {
-        const msgDiv = document.createElement("div");
-        msgDiv.className = msg.sender === "user" ? "message user-message" : "message admin-message";
-        msgDiv.textContent = msg.message;
-        messagesContainer.appendChild(msgDiv);
-    });
+            // Clear and load messages
+            const messagesContainer = document.getElementById("messages");
+            messagesContainer.innerHTML = "";
+            chat.messages.forEach(msg => {
+                const msgDiv = document.createElement("div");
+                msgDiv.className = msg.sender === "user" ? "message user-message" : "message admin-message";
+                msgDiv.textContent = msg.message;
+                messagesContainer.appendChild(msgDiv);
+            });
 
-    document.getElementById("chatList").style.display = "none";
-    document.getElementById("chatBox").style.display = "block";
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-}
-
+            // Show chat box and scroll to the bottom
+            document.getElementById("chatList").style.display = "none";
+            document.getElementById("chatBox").style.display = "block";
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
 
         // Send a reply to the user
         async function sendReply() {
-    const replyMessage = document.getElementById("replyMessage").value;
-    if (!replyMessage || !currentChatId) return;
+            const replyMessage = document.getElementById("replyMessage").value;
+            if (!replyMessage || !currentChatId) return;
 
-    try {
-        const response = await fetch("http://127.0.0.1:5000/send_message", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                user_id: currentChat.user_id, // Use the user ID from the loaded chat
-                sender: "admin",
-                message: replyMessage
-            })
-        });
-        const data = await response.json();
+            try {
+                const response = await fetch("http://127.0.0.1:5000/send_message_admin", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        chat_id: currentChatId,
+                        sender: "admin",
+                        message: replyMessage
+                    })
+                });
+                const data = await response.json();
 
-        if (data.success) {
-            const messagesContainer = document.getElementById("messages");
-            const adminMessage = document.createElement("div");
-            adminMessage.className = "message admin-message";
-            adminMessage.textContent = replyMessage;
-            messagesContainer.appendChild(adminMessage);
+                if (data.success) {
+                    const messagesContainer = document.getElementById("messages");
+                    const adminMessage = document.createElement("div");
+                    adminMessage.className = "message admin-message";
+                    adminMessage.textContent = replyMessage;
+                    messagesContainer.appendChild(adminMessage);
 
-            // Clear the reply textarea
-            document.getElementById("replyMessage").value = "";
-
-            // Scroll to the bottom of the chat
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    // Clear the reply textarea and scroll to bottom
+                    document.getElementById("replyMessage").value = "";
+                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                }
+            } catch (error) {
+                console.error("Error sending reply:", error);
+            }
         }
-    } catch (error) {
-        console.error("Error sending reply:", error);
-    }
-}
-
     </script>
 </body>
 </html>

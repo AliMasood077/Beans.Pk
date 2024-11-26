@@ -186,6 +186,7 @@ async function loadPreviousChats() {
     }
 }
 
+
 // Send a new message
 async function sendMessage() {
     const userInput = document.getElementById("userInput").value;
@@ -201,7 +202,7 @@ async function sendMessage() {
 
     try {
         // Send the message to the backend
-        const response = await fetch("http://127.0.0.1:5000/send_message", {
+        const response = await fetch("http://127.0.0.1:5000/send_message_user", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ user_id: userid, sender: "user", message: userInput }),
@@ -284,8 +285,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Determine the color of the status indicator
                     const statusColor = product.status === 'active' ? 'green' : 'gray';
     
+                    // Set product image or placeholder if not available
+                    const productImage = product.image ? product.image : 'placeholder.jpg';
+    
                     itemDiv.innerHTML = `
-                        <img src="${product.image}" alt="">
+                        <img src="${productImage}" alt="Product Image" class="product-image" style="width: 500px; height: 200px; object-fit: cover;">
                         <p class="price">$${parseFloat(product.price).toFixed(2)}</p>
                         <p class="Name">${product.name}</p>
                         <p class="taste">${product.description}</p>
@@ -320,6 +324,7 @@ document.addEventListener("DOMContentLoaded", function () {
     } else {
         console.error('Element #product-container not found');
     }
+    
     
 
     // Initialize cart total display
@@ -374,46 +379,26 @@ document.addEventListener("click", function (event) {
 
 
 
-// Function to handle image click and show modal
+// Function to handle image click and go to other page
 document.addEventListener('click', function(event) {
+    // Check if the clicked element is an image inside an element with class '.item-1'
     if (event.target && event.target.tagName === 'IMG' && event.target.closest('.item-1')) {
+        
+        // Get the productId from the closest '.item-btn' element
         const productDiv = event.target.closest('.item-1');
         const productId = productDiv.querySelector('.item-btn').getAttribute('data-product-id');
-        const productName = productDiv.querySelector('.Name').textContent;
-        const productPrice = parseFloat(productDiv.querySelector('.price').textContent.replace('$', ''));
-        const productDescription = productDiv.querySelector('.taste').textContent;
-        const productCategory = productDiv.querySelector('.id').textContent.split(': ')[1]; // Assuming category follows 'ID' text
-        const productStore = productDiv.querySelector('.store').textContent.split(': ')[1]; // Assuming store follows 'Store' text
-        const productImage = productDiv.querySelector('img').src;
-
-        // Set modal content
-        document.getElementById('modal-image').src = productImage;
-        document.getElementById('modal-name').textContent = productName;
-        document.getElementById('modal-price').textContent = productPrice.toFixed(2);
-        document.getElementById('modal-description').textContent = productDescription;
-        document.getElementById('modal-category').textContent = productCategory;
-        document.getElementById('modal-store').textContent = productStore;
-
-        // Store the product ID in the "Add to Cart" button
-        const addToCartBtn = document.getElementById('add-to-cart-btn');
-        addToCartBtn.setAttribute('data-product-id', productId);
-
-        // Display the modal
-        document.getElementById('product-modal').style.display = 'block';
+        
+        // Save the productId to localStorage
+        localStorage.setItem('productId', productId);
+        
+        // Optionally, navigate to the other HTML page (e.g., show_product.html)
+        window.location.href = 'show_product.html'; // Replace with your desired URL
     }
 });
 
-// Function to close the modal when the close button is clicked
-document.querySelector('.close').addEventListener('click', function() {
-    document.getElementById('product-modal').style.display = 'none';
-});
 
-// Function to add product to cart from modal
-document.getElementById('add-to-cart-btn').addEventListener('click', function() {
-    const productId = this.getAttribute('data-product-id');
-    addToCart(productId);
-    document.getElementById('product-modal').style.display = 'none';
-});
+
+
 
 // Function to add item to the cart (same as your existing `addToCart` function)
 function addToCart(productId) {
