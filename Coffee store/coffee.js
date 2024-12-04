@@ -59,9 +59,9 @@ async function fetchFilteredData(categoryName) {
 
                 // Determine the color of the status indicator
                 const statusColor = product.status === 'active' ? 'green' : 'gray';
-
+                const productImage = product.image ? product.image : 'placeholder.jpg';
                 itemDiv.innerHTML = `
-                    <img src="${product.image}" alt="">
+                    <img src="${productImage}" alt="Product Image" class="product-image" style="width: 500px; height: 200px; object-fit: cover;">
                     <p class="price">$${parseFloat(product.price).toFixed(2)}</p>
                     <p class="Name">${product.name}</p>
                     <p class="taste">${product.description}</p>
@@ -71,10 +71,10 @@ async function fetchFilteredData(categoryName) {
                     <p class="store">Store: ${product.store_name}</p>
                     <p></p>
                     <div class="status-container">
-                        <span>Status: </span>
-                        <span class="status-indicator" style="background-color: ${statusColor}; width: 10px; height: 10px; display: inline-block; border-radius: 50%;"></span>
-                        <span>${product.status}</span>
-                    </div>
+                        // <span>Status: </span>
+                        // <span class="status-indicator" style="background-color: ${statusColor}; width: 10px; height: 10px; display: inline-block; border-radius: 50%;"></span>
+                        // <span>${product.status}</span>
+                    </div> 
                     <button class="item-btn" data-product-id="${product.id}">Add to cart</button>
                 `;
                 itemContainer.appendChild(itemDiv);
@@ -136,17 +136,46 @@ function addToCart(productId) {
 }
 
 // Function to update the cart total
-function updateCartTotal() {
-    let total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
-    let quantity = cart.reduce((acc, item) => acc + item.quantity, 0);
+document.addEventListener("DOMContentLoaded", function () {
+    const totalAmountSpan = document.getElementById("cart-total");
 
-    const cartTotalElement = document.querySelector("#cart-button #cart-total");
-    if (cartTotalElement) {
-        cartTotalElement.textContent = `$${total.toFixed(2)} (${quantity})`;
-    } else {
-        console.error('Element #cart-total not found inside #cart-button');
+    async function fetchCartTotal() {
+        try {
+            const userId = parseInt(localStorage.getItem('userid')); // Ensure userId is correctly set
+            if (!userId) {
+                // throw new Error("User ID not found in local storage.");
+            }
+            const response = await fetch(`http://127.0.0.1:5000/api/cart/${userId}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const cartItems = await response.json();
+            const total = calculateTotal(cartItems);
+            displayTotal(total);
+        } catch (error) {
+            console.error('Error fetching cart total:', error);
+        }
     }
-}
+
+    function calculateTotal(cartItems) {
+        return cartItems.reduce((total, item) => total + item.price * item.quantity, 0);
+    }
+
+    function displayTotal(total) {
+        if (totalAmountSpan) {
+            totalAmountSpan.textContent = `$${total.toFixed(2)}`;
+        } else {
+            console.error('Element #total-amount not found.');
+        }
+    }
+
+    // Automatically call the function on page load
+    fetchCartTotal();
+});
+
+
 
 // Function to toggle the dropdown menu
 function toggleDropdown() {
@@ -327,37 +356,58 @@ document.addEventListener("DOMContentLoaded", function () {
     
     
 
-    // Initialize cart total display
-    updateCartTotal();
-
-    // Carousel functionality
-    const offers = [
-        `User ID: ${userid}`,
-        "Save 20% use code: Pakistan123 ",
-        "Free shipping on orders over $50!",
-        "Buy 2 get 1 free on select beans!"
-    ];
-
-    let currentIndex = 0;
-    const offerText = document.getElementById("offer-text");
-    const leftArrow = document.getElementById("left-arrow");
-    const rightArrow = document.getElementById("right-arrow");
-
-    function updateOffer() {
-        offerText.textContent = offers[currentIndex];
-    }
-
-    leftArrow.addEventListener("click", function () {
-        currentIndex = (currentIndex === 0) ? offers.length - 1 : currentIndex - 1;
-        updateOffer();
-    });
-
-    rightArrow.addEventListener("click", function () {
-        currentIndex = (currentIndex === offers.length - 1) ? 0 : currentIndex + 1;
-        updateOffer();
-    });
-
-    updateOffer();
+        const offerText = document.getElementById("offer-text");
+        const leftArrow = document.getElementById("left-arrow");
+        const rightArrow = document.getElementById("right-arrow");
+    
+        let offers = []; // Initialize an empty offers array
+        let currentIndex = 0;
+    
+        // Function to fetch discounts from the API
+        async function fetchDiscounts() {
+            try {
+                const response = await fetch("http://127.0.0.1:5000/api/discounts"); // Replace with your API URL
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const discounts = await response.json();
+                // Populate the offers array with fetched discounts
+                offers = discounts.map(discount => {
+                    const { code, percentage, description } = discount;
+                    return `${description || ''} Save ${percentage}% with code: ${code}`;
+                });
+    
+                if (offers.length === 0) {
+                    offers.push("No current offers available.");
+                }
+    
+                updateOffer();
+            } catch (error) {
+                console.error("Failed to fetch discounts:", error);
+                offers = ["Error loading offers. Please try again later."];
+                updateOffer();
+            }
+        }
+    
+        // Function to update the displayed offer
+        function updateOffer() {
+            offerText.textContent = offers[currentIndex];
+        }
+    
+        // Event listeners for carousel navigation
+        leftArrow.addEventListener("click", function () {
+            currentIndex = (currentIndex === 0) ? offers.length - 1 : currentIndex - 1;
+            updateOffer();
+        });
+    
+        rightArrow.addEventListener("click", function () {
+            currentIndex = (currentIndex === offers.length - 1) ? 0 : currentIndex + 1;
+            updateOffer();
+        });
+    
+        // Fetch discounts on page load
+        fetchDiscounts();
+    
 
     // Category dropdown functionality
 const categoryDropdown = document.getElementById("category-dropdown");
@@ -400,38 +450,43 @@ document.addEventListener('click', function(event) {
 
 
 
-// Function to add item to the cart (same as your existing `addToCart` function)
-function addToCart(productId) {
-    const data = {
-        user_id: userid,
-        product_id: productId
-    };
+    // Function to add item to the cart (same as your existing `addToCart` function)
+    function addToCart(productId) {
+        const data = {
+            user_id: userid,
+            product_id: productId
+        };
 
-    fetch('http://127.0.0.1:5000/api/add_to_cart', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.error) {
-            console.error('Error:', data.error);
-            showErrorNotification(data.error); // Display error notification
-        } else {
-            console.log('Success:', data.message);
-            // showNotification('Product added to cart'); // Display success notification
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // showErrorNotification('Failed to add product to cart'); // Display error notification
-    });
+        fetch('http://127.0.0.1:5000/api/add_to_cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                console.error('Error:', data.error);
+                showErrorNotification(data.error); // Display error notification
+            } else {
+                console.log('Success:', data.message);
+                showNotification('Product added to cart'); // Display success notification
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showErrorNotification('Failed to add product to cart'); // Display error notification
+        });
 }
+function showNotification(message, type) {
+    const notification = document.getElementById('notification');
+    notification.textContent = message;
+    notification.className = `notification ${type}`;
+    notification.style.display = 'block';
 
-
-
-
-
+    setTimeout(() => {
+        notification.style.display = 'none';
+    }, 3000);  // Hide after 3 seconds
+}
 });

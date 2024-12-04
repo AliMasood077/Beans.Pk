@@ -84,7 +84,7 @@
         Admin Panel
     </header>
     <div class="container">
-        <div class="button-box">
+        <div class="button-box" id="button-box" style="display: none;">
             <button onclick="redirectTo('admin_chat.html')">chats</button>
             <button onclick="redirectTo('add_discounts.html')">add discounts</button>
             <button onclick="redirectTo('add-product.html')">Add Product</button>
@@ -94,11 +94,28 @@
             <button onclick="redirectTo('delete_user.html')">delete all user</button>
         </div>
     </div>
+
     <script>
+        function promptForPassword() {
+            const validPasswords = ["hasnain123", "shees123", "ali123"];
+            let enteredPassword = prompt("Please enter the admin password:");
+
+            while (enteredPassword && !validPasswords.includes(enteredPassword)) {
+                alert("Incorrect password. Please try again.");
+                enteredPassword = prompt("Please enter the admin password:");
+            }
+
+            if (enteredPassword) {
+                document.getElementById("button-box").style.display = "block";
+            }
+        }
+
         function redirectTo(fileName) {
             window.location.href = fileName;
         }
+
+        // Call the prompt on page load
+        window.onload = promptForPassword;
     </script>
 </body>
 </html>
-

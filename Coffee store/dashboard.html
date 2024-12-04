@@ -238,7 +238,7 @@
                 <li><a href="#">Products</a></li>
                 <li><a href="vendor_orders.html">Orders</a></li>
                 <li><a href="#">Account</a></li>
-                <li><a href="#">Logout</a></li>
+                <li><a href="#" onclick="logout()">Logout</a></li>
             </ul>
         </nav>
     </header>
@@ -315,7 +315,14 @@
         // Fetch vendor ID from local storage
         let ven_id = parseInt(localStorage.getItem('v_id')) || 0;
         let productIds = []; // Array to hold product IDs
-    
+        function logout() {
+            // Set v_id to 0 in local storage
+            localStorage.setItem('v_id', '0');
+            alert("logged out ")
+            // Reload the page
+            location.reload();
+        }
+
         // Function to fetch products for the specific vendor
         function getProductsByVendor(ven_id) {
             // Fetch and display total earnings for the vendor
@@ -329,7 +336,7 @@
                     }   else {
                         // Update the earnings in the dashboard
                         const earningsElement = document.querySelector('.stat-card:nth-child(1) p');
-                        earningsElement.textContent = `$${data.total_earnings.toFixed(2)}`;
+                        earningsElement.textContent = `$${data.total_amount}`;
                     }
                 })
                 .catch(error => console.error('Error fetching earnings:', error));

@@ -414,3 +414,27 @@
         height: 320px;
     }
 }
+.notification {
+    position: fixed; /* Fixed at the top */
+    top: 0;
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%);
+    width: 100%; /* Full width */
+    max-width: 500px; /* Limit width for readability */
+    text-align: center;
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 1000; /* Ensure it appears above other content */
+    display: none; /* Hidden by default */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.notification.success {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.notification.error {
+    background-color: #e74c3c;
+    color: white;
+}
