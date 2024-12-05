@@ -109,6 +109,11 @@
                     data.forEach(product => {
                         const card = document.createElement('div');
                         card.classList.add('card');
+                        localStorage.setItem('productId', product.id);
+                        // Create a link wrapping the entire card
+                        const link = document.createElement('a');
+                        link.href = `show_product.html`; // Redirect to the product details page, replace `/product/${product.id}` with your desired link
+                        link.style.textDecoration = 'none'; // Remove underline from link
 
                         card.innerHTML = `
                             <img src="${product.image || 'https://via.placeholder.com/300'}" alt="${product.name}">
@@ -124,7 +129,11 @@
                             </div>
                         `;
 
-                        container.appendChild(card);
+                        // Append the card to the link
+                        link.appendChild(card);
+
+                        // Append the link (with the card inside) to the container
+                        container.appendChild(link);
                     });
                 }
             } catch (error) {
