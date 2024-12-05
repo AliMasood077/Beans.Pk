@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sale Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .card .details {
+            padding: 1rem;
+        }
+
+        .card .details h3 {
+            margin: 0 0 0.5rem;
+        }
+
+        .card .details p {
+            margin: 0 0 1rem;
+            color: #666;
+        }
+
+        .card .details .price {
+            font-size: 1.2rem;
+            color: #28a745;
+            margin-bottom: 1rem;
+        }
+
+        .card .details .sale-price {
+            color: #dc3545;
+            text-decoration: line-through;
+            margin-left: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .no-products {
+            text-align: center;
+            font-size: 1.5rem;
+            color: #999;
+            margin-top: 3rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Sales on Products</h1>
+        <p>Check out the latest discounts!</p>
+    </header>
+    <div class="container" id="productContainer"></div>
+    <p class="no-products" id="noProductsMessage" style="display: none;">No products available.</p>
+
+    <script>
+        const API_URL = "http://127.0.0.1:5000/api/sale_products"; // Replace with your API endpoint
+
+        async function fetchProducts() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+
+                const container = document.getElementById('productContainer');
+                const noProductsMessage = document.getElementById('noProductsMessage');
+                container.innerHTML = ''; // Clear previous data
+
+                if (data.message) {
+                    noProductsMessage.style.display = 'block'; // Show no products message
+                } else {
+                    noProductsMessage.style.display = 'none'; // Hide no products message
+                    data.forEach(product => {
+                        const card = document.createElement('div');
+                        card.classList.add('card');
+
+                        card.innerHTML = `
+                            <img src="${product.image || 'https://via.placeholder.com/300'}" alt="${product.name}">
+                            <div class="details">
+                                <h3>${product.name}</h3>
+                                <p>${product.description || 'No description available.'}</p>
+                                <div>
+                                    <span class="price">$${product.sale_price}</span>
+                                    ${product.discount > 0 
+                                        ? `<span class="sale-price">$${product.price}</span>` 
+                                        : ''}
+                                </div>
+                            </div>
+                        `;
+
+                        container.appendChild(card);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching products:", error);
+            }
+        }
+
+        // Fetch products on page load
+        fetchProducts();
+    </script>
+</body>
+</html>

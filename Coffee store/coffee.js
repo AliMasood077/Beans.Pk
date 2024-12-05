@@ -2,6 +2,52 @@ let userid;
 let u_name = "";
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 let categories;
+let allProducts = [];
+
+function filterSuggestions() {
+    const input = document.getElementById('searchInput');
+    const query = input.value.trim().toLowerCase();
+    const dropdown = document.getElementById('dropdown');
+
+    dropdown.innerHTML = ''; // Clear previous suggestions
+
+    if (query) {
+        const filteredProducts = allProducts.filter(product =>
+            product.name.toLowerCase().includes(query)
+        );
+
+        if (filteredProducts.length > 0) {
+            filteredProducts.forEach(product => {
+                const item = document.createElement('div');
+                item.className = 'dropdown-item';
+                item.textContent = product.name;
+                item.onclick = () => handleProductClick(product);
+                dropdown.appendChild(item);
+            });
+
+            dropdown.classList.remove('hidden');
+            dropdown.style.display = 'block'; // Ensure the dropdown is visible
+        } else {
+            dropdown.classList.add('hidden');
+        }
+    } else {
+        dropdown.classList.add('hidden');
+    }
+}
+
+function handleProductClick(product,productId) {
+    const input = document.getElementById('searchInput');
+    input.value = product.name;
+    productId =product.id;
+    localStorage.setItem('productId', productId);
+        // Optionally, navigate to the other HTML page (e.g., show_product.html)
+        window.location.href = 'show_product.html'; // Replace with your desired URL
+    const dropdown = document.getElementById('dropdown');
+    dropdown.classList.add('hidden'); // Hide the dropdown
+}
+
+
+
 
 async function fetchCategoryNames() {
     try {
@@ -307,6 +353,7 @@ document.addEventListener("DOMContentLoaded", function () {
         fetch('http://127.0.0.1:5000/api/products')
             .then(response => response.json())
             .then(products => {
+                allProducts = products;
                 products.forEach(product => {
                     const itemDiv = document.createElement('div');
                     itemDiv.classList.add('item-1');

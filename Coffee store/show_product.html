@@ -26,12 +26,40 @@
         .product-image {
             flex: 2;
             text-align: center;
+            position: relative;
         }
 
         .product-image img {
             width: 100%;
             max-width: 500px;
             border-radius: 10px;
+            transition: transform 0.3s ease; /* Smooth transition */
+        }
+
+        .product-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+        }
+        .product-image-container {
+            position: relative;
+        }
+        .product-image {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+        #zoomed-img {
+            position: absolute;
+            top: 0;
+            left: 350px;
+            width: 400px;
+            height: 400px;
+            background-size: 600px 600px;
+            background-repeat: no-repeat;
+            border: 1px solid #000;
+            display: none;
         }
 
         .product-details {
@@ -129,7 +157,7 @@
         }
 
         .star-rating input:checked ~ label {
-            color: #f39c12; /* Highlight selected stars */
+            color: #f39c12;
         }
 
         .star-rating input:hover ~ label,
@@ -143,7 +171,7 @@
         }
 
         .star-rating input:checked + label {
-            color: #f39c12; /* Highlight the clicked star */
+            color: #f39c12;
         }
 
         .small-comment {
@@ -168,37 +196,37 @@
         }
 
         .notification {
-    position: fixed; /* Fixed at the top */
-    top: 0;
-    left: 50%; /* Center horizontally */
-    transform: translateX(-50%);
-    width: 100%; /* Full width */
-    max-width: 500px; /* Limit width for readability */
-    text-align: center;
-    padding: 10px;
-    border-radius: 5px;
-    z-index: 1000; /* Ensure it appears above other content */
-    display: none; /* Hidden by default */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
 
-.notification.success {
-    background-color: #2ecc71;
-    color: white;
-}
+        .notification.success {
+            background-color: #2ecc71;
+            color: white;
+        }
 
-.notification.error {
-    background-color: #e74c3c;
-    color: white;
-}
-
+        .notification.error {
+            background-color: #e74c3c;
+            color: white;
+        }
     </style>
 </head>
 <body>
     <div id="app">
         <div class="container">
-            <div class="product-image">
+            <div class="product-image" onmouseover="zoomImage()" onmousemove="moveZoom(event)" onmouseout="hideZoom()">
                 <img id="product-image" src="placeholder.jpg" alt="Product Image">
+                <div id="zoomed-img" class="zoomed-img"></div>
             </div>
             <div class="product-details">
                 <h2 id="product-name">Product Name</h2>
@@ -209,9 +237,7 @@
                 <p id="product-category">Category: None</p>
                 <p id="product-store">Store: None</p>
 
-                <!-- Add to Cart Button -->
-                <button class="add-to-cart-btn" onclick="addToCart()">Add to Cart</button> <!-- You can replace 1 with the actual product ID -->
-
+                <button class="add-to-cart-btn" onclick="addToCart()">Add to Cart</button>
             </div>
         </div>
 
@@ -222,11 +248,8 @@
             </div>
         </div>
 
-        <!-- Add Comment Form -->
         <div class="add-comment-form">
             <h3>Add a Comment</h3>
-
-            <!-- Star Rating -->
             <div class="star-rating">
                 <input type="radio" id="star5" name="rating" value="5"><label for="star5">★</label>
                 <input type="radio" id="star4" name="rating" value="4"><label for="star4">★</label>
@@ -234,15 +257,12 @@
                 <input type="radio" id="star2" name="rating" value="2"><label for="star2">★</label>
                 <input type="radio" id="star1" name="rating" value="1"><label for="star1">★</label>
             </div>
-
-            <!-- Small Comment Box -->
             <textarea id="comment-text" placeholder="Write your comment..." rows="4" required></textarea>
             <button id="submit-comment">Submit Comment</button>
             <p id="login-message" style="color: red; display: none;">Please login first to add a comment.</p>
             <p class="small-comment">Rate the product and share your thoughts!</p>
         </div>
         
-        <!-- Notification -->
         <div id="notification" class="notification"></div>
     </div>
 
@@ -378,6 +398,40 @@
             setTimeout(() => {
                 notification.style.display = 'none';
             }, 3000);  // Hide after 3 seconds
+        }
+
+        function zoomImage() {
+            const zoomedImg = document.getElementById("zoomed-img");
+            const img = document.getElementById("product-image");
+
+            // Set the zoomed image's background to the product image
+            zoomedImg.style.backgroundImage = `url(${img.src})`;
+            zoomedImg.style.display = "block";
+        }
+
+        function moveZoom(event) {
+            const zoomedImg = document.getElementById("zoomed-img");
+            const img = document.getElementById("product-image");
+
+            // Get the mouse position relative to the image
+            const x = event.clientX - img.offsetLeft;
+            const y = event.clientY - img.offsetTop;
+
+            // Get the zoomed image dimensions
+            const zoomedWidth = zoomedImg.offsetWidth;
+            const zoomedHeight = zoomedImg.offsetHeight;
+
+            // Calculate the position for the zoom effect
+            const xPercent = (x / img.offsetWidth) * 100;
+            const yPercent = (y / img.offsetHeight) * 100;
+
+            // Update the background position of the zoomed image
+            zoomedImg.style.backgroundPosition = `${xPercent}% ${yPercent}%`;
+        }
+
+        function hideZoom() {
+            const zoomedImg = document.getElementById("zoomed-img");
+            zoomedImg.style.display = "none";
         }
     </script>
 </body>

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Beans.pk</title>
+    <title>Bazaar.pk</title>
     <link rel="stylesheet" href="header.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
@@ -25,7 +25,7 @@
                     <span class="left-arrow">
                         <i class="fa-solid fa-angle-left" id="left-arrow"></i>
                     </span>
-                    <span id="offer-text">Save 20% use code: Pakistan123</span>
+                    <span id="offer-text">Save 20% use code: Bazaar123</span>
                     <span class="right-arrow">
                         <i class="fa-solid fa-angle-right" id="right-arrow"></i>
                     </span>
@@ -35,13 +35,22 @@
 
         <!-- Main Header -->
         <div class="header-1-container">
-            <div class="header-1">
-                <img class="logo" src="Brown_Vintage_Coffee_Shop_Logo__2_-removebg-preview.png" alt="Beans.pk Logo">
-            </div>
+            <!-- <div class="header-1">
+                <img class="logo" src="Bazaar_Logo.png" alt="Bazaar.pk Logo">
+            </div> -->
             <div class="search-bar">
-                <input type="text" placeholder="Search for...">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="Search for products..." 
+                    onkeyup="filterSuggestions()" 
+                />
                 <i class="fa-solid fa-magnifying-glass"></i>
+                <div id="dropdown" class="dropdown hidden"></div>
             </div>
+            
+            
+            
             <div class="cart">
                 <a href="cart.html"> <button class="btn-1" id="cart-button">
                         <i class="fa-solid fa-cart-shopping"></i>
@@ -54,13 +63,14 @@
         <!-- Navigation Bar -->
         <div class="navbar-container">
             <div class="options">
-                <a href="coffee.html">Home</a>
+                <a href="index.html">Home</a>
                 <a href="login.html">Account</a>
-                <a href="trainers.html">About us</a>
-                <a href="contact_us.html">Contact us</a>
+                <a href="about.html">About Us</a>
+                <a href="contact_us.html">Contact Us</a>
                 <a href="admin.html">Admin Panel</a>
-                <a href="user_orders.html">orders </a>
+                <a href="user_orders.html">Orders</a>
             </div>
+            
             <div class="category">
                 <span class="category-icon">
                     <i class="fa-solid fa-store"></i>
@@ -80,9 +90,8 @@
                 <div class="dropdown" id="profile-dropdown">
                     <!-- Dropdown options will be inserted here dynamically -->
                 </div>
-           
+            </div>
         </div>
-        
     </header>
 
     <section>
@@ -90,134 +99,96 @@
         <div class="hero-container">
             <div class="hero-para">
                 <p class="p1">Up to 30% discount</p>
-                <p class="p2">Get your favorite today</p>
-                <p class="p3">Get brewing with our irresistible sale! Enjoy up to 30% off on a wide selection of
-                    aromatic coffees and accessories. Limited time offer!</p>
+                <p class="p2">Shop Your Favorites Today</p>
+                <p class="p3">Enjoy amazing deals on a variety of products. Don’t miss out—limited-time offer!</p>
                 <a href="cart.html">
                     <button class="hero-btn">Shop Now</button>
                 </a>
             </div>
             <div class="hero-img">
-                <img src="image-removebg-preview.png" alt="">
+                <p class="p2">December sale upto 70% off</p>
+                <p class="p3">Get your favourite today because time is limited</p>
+                <a href="sale.html">
+                    <button class="hero-btn">Visit Sale</button>
+                </a>
+                <img src="generic_image.png" alt="">
             </div>
         </div>
+        
 
-        <!-- Coffee Beans and Prices -->
+        <!-- Product Display -->
         <div class="item-container" id="product-container">
             <!-- Product items will be dynamically added here -->
         </div>
-        <!-- Modal structure -->
 
-
-
-       <!-- Why Bazaar Section -->
-       <div class="why-bazaar-container">
-        <div class="bazaar-text">
-            <h2>Why shop at Beans.pk</h2>
-        </div>
-        <div class="reason-container">
-            <div class="reason">
-                <i class="fas fa-shipping-fast"></i>
-                <h3>Shipping</h3>
-                <p>Get your products delivered right to your doorstep with our reliable shipping services.</p>
+        <!-- Why Bazaar Section -->
+        <div class="why-bazaar-container">
+            <div class="bazaar-text">
+                <h2><b>Why shop at Bazaar.pk</b></h2>
             </div>
-            <div class="reason">
-                <i class="fas fa-undo"></i>
-                <h3>Returns</h3>
-                <p>Hassle-free returns process to ensure your satisfaction with our products.</p>
-            </div>
-            <div class="reason">
-                <i class="fas fa-store"></i>
-                <h3>Pickup</h3>
-                <p>Convenient option to collect your purchases from our store at your preferred time.</p>
-            </div>
-            <div class="reason">
-                <i class="fas fa-coffee"></i>
-                <h3>Brand</h3>
-                <p>Discover high-quality products from our trusted and renowned brand, known for excellence and
-                    reliability.</p>
+            <div class="reason-container">
+                <div class="reason">
+                    <i class="fas fa-shipping-fast"></i>
+                    <h3>Fast Shipping</h3>
+                    <p>Get your products delivered quickly and safely to your doorstep.</p>
+                </div>
+                <div class="reason">
+                    <i class="fas fa-undo"></i>
+                    <h3>Easy Returns</h3>
+                    <p>We ensure a smooth return process to make your shopping hassle-free.</p>
+                </div>
+                <div class="reason">
+                    <i class="fas fa-store"></i>
+                    <h3>Wide Range</h3>
+                    <p>Choose from a diverse range of products to meet all your needs.</p>
+                </div>
+                <div class="reason">
+                    <i class="fas fa-star"></i>
+                    <h3>Trusted Quality</h3>
+                    <p>Our commitment to excellence ensures you get the best products.</p>
+                </div>
             </div>
         </div>
+    </section>
 
-        <div class="bazaar-text">
-            <h2 class="second-reason">You will become a regular</h2>
-            <p class="second-para">Three things you won't find in your local store</p>
-        </div>
-        <div class="reason-container second-reason-2">
-            <div class="reason">
-                <img class="second-icons" src="item13.png" alt="">
-                <h3>Perfect Blends</h3>
-                <p>Discover the exquisite harmony of flavors crafted to perfection, delivering a truly exceptional
-                    coffee experience.</p>
-            </div>
-            <div class="reason">
-                <img class="second-icons" src="item14.png" alt="">
-                <h3>With ecology in mind</h3>
-                <p>Savor the rich aroma of our sustainably sourced coffees, knowing each cup supports environmental
-                    preservation.</p>
-            </div>
-            <div class="reason">
-                <img class="second-icons" src="item15.png" alt="">
-                <h3>Unique flavours</h3>
-                <p>Immerse your senses in a world of extraordinary tastes, where every sip unveils a remarkable and
-                    unparalleled coffee journey.</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<footer>
-    <div class="footer-container">
-        <div class="footer-1">
-            <ul>
-                <p>Beans.Pk</p>
-                <a>Brewing happiness, one cup at a time.</a>
+    <footer>
+        <footer class="footer-container">
+            <div class="footer-content">
+                <p class="footer-text">Bazaar.pk <br> Your one-stop online store.</p>
                 <div class="social-icons">
-                    <i id="facebook-icon" class="fa-brands fa-facebook"></i>
-                    <i id="instagram-icon" class="fa-brands fa-instagram"></i>
-                    <i id="twitter-icon" class="fa-brands fa-x-twitter"></i>
+                    <i class="fab fa-facebook" title="Facebook"></i>
+                    <i class="fab fa-instagram" title="Instagram"></i>
+                    <i class="fab fa-twitter" title="Twitter"></i>
                 </div>
-            </ul> 
-            <ul>
-                <span class="navigate">
-                    <p>Navigate</p>
-                    <a href="coffee.html">Home</a>
-                    <a>Account</a>
-                    <a>About Us</a>
-                    <a>Contact</a>
-                </span>
-            </ul>
-            <ul>
-                <p>Supported Payment Methods</p>
                 <div class="payment-methods">
-                    <i class="fa-brands fa-cc-visa"></i>
-                    <i class="fa-brands fa-cc-mastercard"></i>
-                    <i class="fa-brands fa-cc-paypal"></i>
-                    <i class="fa-brands fa-cc-discover"></i>
+                    <i class="fab fa-cc-visa" title="Visa"></i>
+                    <i class="fab fa-cc-mastercard" title="MasterCard"></i>
+                    <i class="fab fa-cc-paypal" title="PayPal"></i>
                 </div>
-            </ul>
-        </div>
-    </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2024 Bazaar.pk
+            </div>
+        </footer>
+        
+    </footer>
 
-    <div class="footer-2-container">
-        <div class="footer-2">
-            <p>Copyright © 2024 Beans.Pk</p>
-        </div>
-    </div>
-</footer>
-<div id="notification" class="notification"></div>
+    <div id="notification" class="notification"></div>
 
-<!-- Chatbot Widget -->
-<div id="chatbot-head" onclick="toggleChatbot()">💬 Chat with us</div>
-<div id="chatbot-container">
-    <div id="chatbot-header">
-        <span>Chatbot</span>
-        <button onclick="toggleChatbot()">✖</button>
+    <!-- Chatbot Widget -->
+    <div id="chatbot-head" onclick="toggleChatbot()">💬 Chat with us</div>
+    <div id="chatbot-container">
+        <div id="chatbot-header">
+            <span>Chatbot</span>
+            <button onclick="toggleChatbot()">✖</button>
+        </div>
+        <div id="chatbox"></div>
+        <input type="text" id="userInput" placeholder="Type your message here">
+        <button onclick="sendMessage()">Send</button>
     </div>
-    <div id="chatbox"></div>
-    <input type="text" id="userInput" placeholder="Type your message here">
-    <button onclick="sendMessage()">Send</button>
-</div>
+</body>
+
+</html>
 
 
 

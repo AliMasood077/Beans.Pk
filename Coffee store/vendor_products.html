@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vendor Active Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .count-box {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 2rem;
+            width: 300px;
+        }
+
+        .count-box h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .count-box p {
+            margin: 1rem 0;
+            font-size: 1.2rem;
+            color: #007bff;
+        }
+
+        .products-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .product-card {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            width: 250px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-card .product-details {
+            padding: 1rem;
+        }
+
+        .product-card .product-details h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .product-card .product-details p {
+            margin: 0.5rem 0;
+            color: #666;
+        }
+
+        .product-card .product-details .price {
+            font-size: 1.1rem;
+            color: #28a745;
+        }
+
+        .product-card .product-details .sale-price {
+            text-decoration: line-through;
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Vendor Active Products</h1>
+        <p>View all your active products and their details</p>
+    </header>
+
+    <div class="container">
+        <div class="count-box" id="productCountBox">
+            <h3>Total Active Products</h3>
+            <p id="activeProductsCount">Loading...</p>
+        </div>
+
+        <div class="products-container" id="productsContainer"></div>
+    </div>
+
+    <script>
+        const API_URL = "http://127.0.0.1:5000/api/vendor_active_products"; // Your API URL
+        let ven_id = parseInt(localStorage.getItem('v_id')) || 0;
+        async function fetchActiveProductCount() {
+            try {
+                const response = await fetch(`${API_URL}/${ven_id}`);
+                const data = await response.json();
+
+                if (data.active_products !== undefined) {
+                    document.getElementById('activeProductsCount').textContent = data.active_products;
+                } else {
+                    document.getElementById('activeProductsCount').textContent = "Error fetching data";
+                }
+            } catch (error) {
+                console.error("Error fetching active product count:", error);
+                document.getElementById('activeProductsCount').textContent = "Error fetching data";
+            }
+        }
+
+        async function fetchVendorProducts() {
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/products_by_vendor/${ven_id}`);
+                const products = await response.json();
+                
+                const container = document.getElementById('productsContainer');
+                container.innerHTML = ''; // Clear previous products
+
+                if (products.message) {
+                    container.innerHTML = `<p>${products.message}</p>`;
+                    return;
+                }
+
+                products.forEach(product => {
+                    if (product.is_active === 1) {
+                        const card = document.createElement('div');
+                        card.classList.add('product-card');
+                        card.innerHTML = `
+                            <img src="${product.image || 'https://via.placeholder.com/250'}" alt="${product.name}">
+                            <div class="product-details">
+                                <h3>${product.name}</h3>
+                                <p>${product.description || 'No description available.'}</p>
+                                <div>
+                                    <span class="price">$${product.price}</span>
+                                    ${product.sale_price ? `<span class="sale-price">$${product.sale_price}</span>` : ''}
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    }
+                });
+            } catch (error) {
+                console.error("Error fetching vendor products:", error);
+            }
+        }
+
+        // Fetch active product count and vendor products on page load
+        fetchActiveProductCount();
+        fetchVendorProducts();
+    </script>
+</body>
+</html>
